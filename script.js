@@ -22,6 +22,9 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Get a reference to the database service
+const database = firebase.database(app);
+
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");
 const exerciseSection = document.getElementById("exercise-section");
@@ -60,55 +63,79 @@ function loadProfiles() {
     });
 }
 
-// Function to add a new profile
 function addProfile() {
     const profileName = newProfileInput.value.trim();
     if (profileName === '') {
         alert("Please enter a profile name");
         return;
     }
-    set(ref(db, `profiles/${profileName}`), {
-        exercises: {
-            Monday: '',
-            Tuesday: '',
-            Wednesday: '',
-            Thursday: '',
-            Friday: '',
-            Saturday: '',
-            Sunday: ''
-        }
+
+    // Create the profile with exercises
+    const profileRef = ref(db, `profiles/${profileName}`);
+    set(profileRef, {
+        exercises: {}
     }).then(() => {
-        loadProfiles();
-        newProfileInput.value = '';
-    }).catch((error) => {
-        console.error(error);
+        // Load existing exercises
+        database.ref("exercises").once("value", snapshot => {
+            const exercises = {};
+            snapshot.forEach(exercise => {
+                exercises[exercise.key] = 0; // Initialize with 0 reps
+            });
+            // Set the exercises for the new profile
+            return set(ref(db, `profiles/${profileName}/exercises`), exercises);
+        }).then(() => {
+            // Reload profiles and exercise data
+            loadProfiles();
+            loadExerciseData();
+            newProfileInput.value = '';
+        }).catch(error => {
+            console.error("Error adding profile:", error);
+        });
     });
 }
 
-// Function to load exercise data
 function loadExerciseData() {
     const selectedProfile = profileSelect.value;
-    if (!selectedProfile) {
-        exerciseSection.innerHTML = '';
-        return;
-    }
+    if (!selectedProfile) return;
 
     const dbRef = ref(db, `profiles/${selectedProfile}/exercises`);
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
             const exercises = snapshot.val();
             exerciseSection.innerHTML = '';
-            for (let day in exercises) {
+            for (let exercise in exercises) {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 exerciseDiv.innerHTML = `
-                    <label for="${day}">${day}</label>
-                    <input type="text" id="${day}" class="form-control" value="${exercises[day]}" onchange="updateExercise('${day}', this.value)">
+                    <label for="${exercise}">${exercise}</label>
+                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="updateExercise('${exercise}', this.value)">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
         } else {
             console.log("No exercise data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+function logExercise(profile, exercise) {
+    const selectedProfileRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
+    get(selectedProfileRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const currentCount = snapshot.val();
+            const updatedCount = currentCount - 1; // Reduce by 1, adjust this logic as needed
+            update(selectedProfileRef, updatedCount).then(() => {
+                console.log(`Exercise ${exercise} logged for profile ${profile}`);
+                // Reload exercise data after updating
+                loadExerciseData();
+            }).catch((error) => {
+                console.error("Error updating exercise count:", error);
+            });
+        } else {
+            console.log("Exercise data not found");
         }
     }).catch((error) => {
         console.error(error);

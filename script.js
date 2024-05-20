@@ -1,6 +1,7 @@
 // Import the necessary Firebase functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Your web app's Firebase configuration
@@ -19,11 +20,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");
 const exerciseSection = document.getElementById("exercise-section");
 
+// Function to authenticate anonymously
+function authenticate() {
+    signInAnonymously(auth)
+        .then(() => {
+            console.log("Signed in anonymously");
+            loadProfiles();
+        })
+        .catch((error) => {
+            console.error("Error signing in anonymously:", error);
+        });
+}
+
+// Function to load profiles
 function loadProfiles() {
     const dbRef = ref(db);
     get(child(dbRef, `profiles/`)).then((snapshot) => {
@@ -45,6 +60,7 @@ function loadProfiles() {
     });
 }
 
+// Function to add a new profile
 function addProfile() {
     const profileName = newProfileInput.value.trim();
     if (profileName === '') {
@@ -69,6 +85,7 @@ function addProfile() {
     });
 }
 
+// Function to load exercise data
 function loadExerciseData() {
     const selectedProfile = profileSelect.value;
     if (!selectedProfile) {
@@ -98,6 +115,7 @@ function loadExerciseData() {
     });
 }
 
+// Function to update exercise data
 function updateExercise(day, value) {
     const selectedProfile = profileSelect.value;
     if (!selectedProfile) return;
@@ -109,6 +127,7 @@ function updateExercise(day, value) {
     });
 }
 
+// Function to reset exercises
 function resetExercises() {
     const selectedProfile = profileSelect.value;
     if (!selectedProfile) return;
@@ -130,91 +149,7 @@ function resetExercises() {
     });
 }
 
+// Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {
-    loadProfiles();
-    loadExerciseData();
+    authenticate();
 });
-
-function logExercise(exercise) {
-    const input = document.getElementById(exercise).value;
-    if (!input || input <= 0) {
-        alert("Please enter a valid number");
-        return;
-    }
-
-    const count = parseFloat(input);
-    const profile = document.getElementById("profile").value;
-    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
-
-    get(exerciseRef).then(snapshot => {
-        const remaining = snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
-
-        if (count > remaining) {
-            alert(`You cannot log more than ${remaining} ${exercise}`);
-            return;
-        }
-
-        const updatedCount = remaining - count;
-        set(exerciseRef, updatedCount).then(() => {
-            updateUI(profile);
-
-            if (updatedCount === 0) {
-                alert(`Congratulations! You have completed all your ${exercise} for the week!`);
-            }
-
-            document.getElementById(exercise).value = '';
-        });
-    });
-}
-
-function getRemaining(exercise, profile) {
-    return get(ref(db, `profiles/${profile}/exercises/${exercise}`)).then(snapshot => {
-        return snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
-    });
-}
-
-function getExerciseTotal(exercise) {
-    return get(ref(db, `exercises/${exercise}`)).then(snapshot => {
-        return snapshot.exists() ? parseFloat(snapshot.val()) : 0;
-    });
-}
-
-function updateUI(profile) {
-    get(ref(db, "exercises")).then(snapshot => {
-        const exerciseSection = document.getElementById("exercise-section");
-        exerciseSection.innerHTML = "";
-
-        snapshot.forEach(exercise => {
-            const div = document.createElement("div");
-            div.classList.add("form-group");
-
-            const label = document.createElement("label");
-            label.htmlFor = exercise.key;
-            label.textContent = `${exercise.key.charAt(0).toUpperCase() + exercise.key.slice(1)}:`;
-
-            const input = document.createElement("input");
-            input.type = "number";
-            input.id = exercise.key;
-            input.classList.add("form-control");
-            input.placeholder = "0";
-
-            const button = document.createElement("button");
-            button.onclick = () => logExercise(exercise.key);
-            button.classList.add("btn", "btn-primary", "mt-2");
-            button.textContent = "Log";
-
-            const span = document.createElement("span");
-            span.id = `${exercise.key}-left`;
-            getRemaining(exercise.key, profile).then(remaining => {
-                span.textContent = `${remaining} left`;
-                span.classList.add("ml-2");
-                div.appendChild(label);
-                div.appendChild(input);
-                div.appendChild(button);
-                div.appendChild(span);
-                exerciseSection.appendChild(div);
-            });
-        });
-    });
-}
-

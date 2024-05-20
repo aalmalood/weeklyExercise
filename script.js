@@ -130,12 +130,6 @@ function resetExercises() {
     });
 }
 
-// Initial load of profiles
-loadProfiles();
-
-import {database} from 'src/index.js';
-//const database = firebase.database();
-
 document.addEventListener("DOMContentLoaded", () => {
     loadProfiles();
     loadExerciseData();
@@ -150,9 +144,9 @@ function logExercise(exercise) {
 
     const count = parseFloat(input);
     const profile = document.getElementById("profile").value;
-    const exerciseRef = database.ref(`profiles/${profile}/exercises/${exercise}`);
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
 
-    exerciseRef.once("value", snapshot => {
+    get(exerciseRef).then(snapshot => {
         const remaining = snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
 
         if (count > remaining) {
@@ -161,81 +155,32 @@ function logExercise(exercise) {
         }
 
         const updatedCount = remaining - count;
-        exerciseRef.set(updatedCount);
-        updateUI(profile);
+        set(exerciseRef, updatedCount).then(() => {
+            updateUI(profile);
 
-        if (updatedCount === 0) {
-            alert(`Congratulations! You have completed all your ${exercise} for the week!`);
-        }
+            if (updatedCount === 0) {
+                alert(`Congratulations! You have completed all your ${exercise} for the week!`);
+            }
 
-        document.getElementById(exercise).value = '';
+            document.getElementById(exercise).value = '';
+        });
     });
 }
 
 function getRemaining(exercise, profile) {
-    return database.ref(`profiles/${profile}/exercises/${exercise}`).once("value")
-        .then(snapshot => {
-            return snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
-        });
-}
-
-function getExerciseTotal(exercise) {
-    return database.ref(`exercises/${exercise}`).once("value")
-        .then(snapshot => {
-            return snapshot.exists() ? parseFloat(snapshot.val()) : 0;
-        });
-}
-
-function loadProfiles() {
-    const profileSelect = document.getElementById("profile");
-    profileSelect.innerHTML = "";
-
-    database.ref("profiles").once("value", snapshot => {
-        snapshot.forEach(profile => {
-            const option = document.createElement("option");
-            option.value = profile.key;
-            option.textContent = profile.key;
-            profileSelect.appendChild(option);
-        });
-
-        if (snapshot.numChildren() > 0) {
-            profileSelect.value = snapshot.val()[0];
-        } else {
-            profileSelect.innerHTML = "<option>No profiles</option>";
-        }
+    return get(ref(db, `profiles/${profile}/exercises/${exercise}`)).then(snapshot => {
+        return snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
     });
 }
 
-function addProfile() {
-    const newProfile = document.getElementById("new-profile").value.trim();
-    if (!newProfile) {
-        alert("Please enter a profile name");
-        return;
-    }
-
-    database.ref(`profiles/${newProfile}`).set({}); // Initialize profile in database
-    loadProfiles();
-    document.getElementById("new-profile").value = '';
-}
-
-function loadExerciseData() {
-    const profile = document.getElementById("profile").value;
-    if (profile === "No profiles") return;
-
-    database.ref("exercises").once("value", snapshot => {
-        snapshot.forEach(exercise => {
-            database.ref(`profiles/${profile}/exercises/${exercise.key}`).once("value", snapshot => {
-                if (!snapshot.exists()) {
-                    database.ref(`profiles/${profile}/exercises/${exercise.key}`).set(exercise.val());
-                }
-            });
-        });
-        updateUI(profile);
+function getExerciseTotal(exercise) {
+    return get(ref(db, `exercises/${exercise}`)).then(snapshot => {
+        return snapshot.exists() ? parseFloat(snapshot.val()) : 0;
     });
 }
 
 function updateUI(profile) {
-    database.ref("exercises").once("value", snapshot => {
+    get(ref(db, "exercises")).then(snapshot => {
         const exerciseSection = document.getElementById("exercise-section");
         exerciseSection.innerHTML = "";
 
@@ -277,6 +222,7 @@ function resetExercises() {
     const profile = document.getElementById("profile").value;
     if (profile === "No profiles") return;
 
-    database.ref(`profiles/${profile}/exercises`).set({});
-    updateUI(profile);
+    set(ref(db, `profiles/${profile}/exercises`), {}).then(() => {
+        updateUI(profile);
+    });
 }

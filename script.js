@@ -1,3 +1,23 @@
+// Initialize Firebase
+const firebaseConfig = {
+ apiKey: "AIzaSyA7y-oD3BqbRhSOqqBpfBPGWD2MuDk1kx4",
+
+  authDomain: "weeklyexercise-31473.firebaseapp.com",
+
+  projectId: "weeklyexercise-31473",
+
+  storageBucket: "weeklyexercise-31473.appspot.com",
+
+  messagingSenderId: "245366626933",
+
+  appId: "1:245366626933:web:56225d7d6b523121b0f63c",
+
+  measurementId: "G-JD4ZNG6NHY"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
 document.addEventListener("DOMContentLoaded", () => {
     loadProfiles();
     loadExerciseData();
@@ -12,50 +32,60 @@ function logExercise(exercise) {
 
     const count = parseFloat(input);
     const profile = document.getElementById("profile").value;
-    const remaining = getRemaining(exercise, profile);
+    const exerciseRef = database.ref(`profiles/${profile}/exercises/${exercise}`);
 
-    if (count > remaining) {
-        alert(`You cannot log more than ${remaining} ${exercise}`);
-        return;
-    }
+    exerciseRef.once("value", snapshot => {
+        const remaining = snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
 
-    const updatedCount = remaining - count;
-    localStorage.setItem(`${profile}_${exercise}`, updatedCount);
-    updateUI(profile);
+        if (count > remaining) {
+            alert(`You cannot log more than ${remaining} ${exercise}`);
+            return;
+        }
 
-    if (updatedCount === 0) {
-        alert(`Congratulations! You have completed all your ${exercise} for the week!`);
-    }
+        const updatedCount = remaining - count;
+        exerciseRef.set(updatedCount);
+        updateUI(profile);
 
-    document.getElementById(exercise).value = '';
+        if (updatedCount === 0) {
+            alert(`Congratulations! You have completed all your ${exercise} for the week!`);
+        }
+
+        document.getElementById(exercise).value = '';
+    });
 }
 
 function getRemaining(exercise, profile) {
-    return parseFloat(localStorage.getItem(`${profile}_${exercise}`)) || getExerciseTotal(exercise);
+    return database.ref(`profiles/${profile}/exercises/${exercise}`).once("value")
+        .then(snapshot => {
+            return snapshot.exists() ? parseFloat(snapshot.val()) : getExerciseTotal(exercise);
+        });
 }
 
 function getExerciseTotal(exercise) {
-    const exercises = JSON.parse(localStorage.getItem("exercises")) || {};
-    return exercises[exercise] || 0;
+    return database.ref(`exercises/${exercise}`).once("value")
+        .then(snapshot => {
+            return snapshot.exists() ? parseFloat(snapshot.val()) : 0;
+        });
 }
 
 function loadProfiles() {
-    const profiles = JSON.parse(localStorage.getItem("profiles")) || [];
     const profileSelect = document.getElementById("profile");
     profileSelect.innerHTML = "";
 
-    profiles.forEach(profile => {
-        const option = document.createElement("option");
-        option.value = profile;
-        option.textContent = profile;
-        profileSelect.appendChild(option);
-    });
+    database.ref("profiles").once("value", snapshot => {
+        snapshot.forEach(profile => {
+            const option = document.createElement("option");
+            option.value = profile.key;
+            option.textContent = profile.key;
+            profileSelect.appendChild(option);
+        });
 
-    if (profiles.length > 0) {
-        profileSelect.value = profiles[0];
-    } else {
-        profileSelect.innerHTML = "<option>No profiles</option>";
-    }
+        if (snapshot.numChildren() > 0) {
+            profileSelect.value = snapshot.val()[0];
+        } else {
+            profileSelect.innerHTML = "<option>No profiles</option>";
+        }
+    });
 }
 
 function addProfile() {
@@ -65,14 +95,7 @@ function addProfile() {
         return;
     }
 
-    const profiles = JSON.parse(localStorage.getItem("profiles")) || [];
-    if (profiles.includes(newProfile)) {
-        alert("Profile already exists");
-        return;
-    }
-
-    profiles.push(newProfile);
-    localStorage.setItem("profiles", JSON.stringify(profiles));
+    database.ref(`profiles/${newProfile}`).set({}); // Initialize profile in database
     loadProfiles();
     document.getElementById("new-profile").value = '';
 }
@@ -80,61 +103,62 @@ function addProfile() {
 function loadExerciseData() {
     const profile = document.getElementById("profile").value;
     if (profile === "No profiles") return;
-    const exercises = JSON.parse(localStorage.getItem("exercises")) || {};
-    Object.keys(exercises).forEach(exercise => {
-        if (localStorage.getItem(`${profile}_${exercise}`) === null) {
-            localStorage.setItem(`${profile}_${exercise}`, exercises[exercise]);
-        }
+
+    database.ref("exercises").once("value", snapshot => {
+        snapshot.forEach(exercise => {
+            database.ref(`profiles/${profile}/exercises/${exercise.key}`).once("value", snapshot => {
+                if (!snapshot.exists()) {
+                    database.ref(`profiles/${profile}/exercises/${exercise.key}`).set(exercise.val());
+                }
+            });
+        });
+        updateUI(profile);
     });
-    updateUI(profile);
 }
 
 function updateUI(profile) {
-    const exercises = JSON.parse(localStorage.getItem("exercises")) || {};
-    const exerciseSection = document.getElementById("exercise-section");
-    exerciseSection.innerHTML = "";
+    database.ref("exercises").once("value", snapshot => {
+        const exerciseSection = document.getElementById("exercise-section");
+        exerciseSection.innerHTML = "";
 
-    Object.keys(exercises).forEach(exercise => {
-        const div = document.createElement("div");
-        div.classList.add("form-group");
+        snapshot.forEach(exercise => {
+            const div = document.createElement("div");
+            div.classList.add("form-group");
 
-        const label = document.createElement("label");
-        label.htmlFor = exercise;
-        label.textContent = `${exercise.charAt(0).toUpperCase() + exercise.slice(1)}:`;
+            const label = document.createElement("label");
+            label.htmlFor = exercise.key;
+            label.textContent = `${exercise.key.charAt(0).toUpperCase() + exercise.key.slice(1)}:`;
 
-        const input = document.createElement("input");
-        input.type = "number";
-        input.id = exercise;
-        input.classList.add("form-control");
-        input.placeholder = "0";
+            const input = document.createElement("input");
+            input.type = "number";
+            input.id = exercise.key;
+            input.classList.add("form-control");
+            input.placeholder = "0";
 
-        const button = document.createElement("button");
-        button.onclick = () => logExercise(exercise);
-        button.classList.add("btn", "btn-primary", "mt-2");
-        button.textContent = "Log";
+            const button = document.createElement("button");
+            button.onclick = () => logExercise(exercise.key);
+            button.classList.add("btn", "btn-primary", "mt-2");
+            button.textContent = "Log";
 
-        const span = document.createElement("span");
-        span.id = `${exercise}-left`;
-        span.textContent = `${getRemaining(exercise, profile)} left`;
-        span.classList.add("ml-2");
-
-        div.appendChild(label);
-        div.appendChild(input);
-        div.appendChild(button);
-        div.appendChild(span);
-
-        exerciseSection.appendChild(div);
+            const span = document.createElement("span");
+            span.id = `${exercise.key}-left`;
+            getRemaining(exercise.key, profile).then(remaining => {
+                span.textContent = `${remaining} left`;
+                span.classList.add("ml-2");
+                div.appendChild(label);
+                div.appendChild(input);
+                div.appendChild(button);
+                div.appendChild(span);
+                exerciseSection.appendChild(div);
+            });
+        });
     });
 }
 
 function resetExercises() {
     const profile = document.getElementById("profile").value;
     if (profile === "No profiles") return;
-    
-    const exercises = JSON.parse(localStorage.getItem("exercises")) || {};
-    Object.keys(exercises).forEach(exercise => {
-        localStorage.setItem(`${profile}_${exercise}`, exercises[exercise]);
-    });
-    
+
+    database.ref(`profiles/${profile}/exercises`).set({});
     updateUI(profile);
 }

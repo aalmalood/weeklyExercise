@@ -76,7 +76,8 @@ function addProfile() {
         exercises: {}
     }).then(() => {
         // Load existing exercises
-        db.ref("exercises").once("value", snapshot => {
+        const dbRef = ref(db, `exercises`);
+        dbRef("exercises").once("value", snapshot => {
             const exercises = {};
             snapshot.forEach(exercise => {
                 exercises[exercise.key] = 0; // Initialize with 0 reps
@@ -108,7 +109,7 @@ function loadExerciseData() {
                 exerciseDiv.classList.add('form-group');
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
-                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="updateExercise('${exercise}', this.value)">
+                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="logExercise('${exercise}', this.value)">
                     <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);

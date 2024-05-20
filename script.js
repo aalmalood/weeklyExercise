@@ -23,7 +23,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // Get a reference to the database service
-const database = firebase.database();
+const database = firebase.database(app);
 
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");

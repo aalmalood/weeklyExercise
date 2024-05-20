@@ -218,11 +218,3 @@ function updateUI(profile) {
     });
 }
 
-function resetExercises() {
-    const profile = document.getElementById("profile").value;
-    if (profile === "No profiles") return;
-
-    set(ref(db, `profiles/${profile}/exercises`), {}).then(() => {
-        updateUI(profile);
-    });
-}

@@ -23,7 +23,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // Get a reference to the database service
-const database = getDatabase(app);
+//const database = getDatabase(app);
 
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");
@@ -76,7 +76,7 @@ function addProfile() {
         exercises: {}
     }).then(() => {
         // Load existing exercises
-        database.ref("exercises").once("value", snapshot => {
+        db.ref("exercises").once("value", snapshot => {
             const exercises = {};
             snapshot.forEach(exercise => {
                 exercises[exercise.key] = 0; // Initialize with 0 reps

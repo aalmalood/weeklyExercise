@@ -21,6 +21,11 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getDatabase(app);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Get a reference to the database service
+const database = firebase.database();
 
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");

@@ -60,7 +60,6 @@ function loadProfiles() {
     });
 }
 
-// Function to add a new profile
 function addProfile() {
     const profileName = newProfileInput.value.trim();
     if (profileName === '') {
@@ -71,9 +70,7 @@ function addProfile() {
     // Create the profile with exercises
     const profileRef = ref(db, `profiles/${profileName}`);
     set(profileRef, {
-        exercises: {
-            // Add existing exercises here
-        }
+        exercises: {}
     }).then(() => {
         // Load existing exercises
         database.ref("exercises").once("value", snapshot => {
@@ -82,7 +79,7 @@ function addProfile() {
                 exercises[exercise.key] = 0; // Initialize with 0 reps
             });
             // Set the exercises for the new profile
-            return update(ref(db, `profiles/${profileName}/exercises`), exercises);
+            return set(ref(db, `profiles/${profileName}/exercises`), exercises);
         }).then(() => {
             // Reload profiles and exercise data
             loadProfiles();
@@ -94,25 +91,21 @@ function addProfile() {
     });
 }
 
-// Function to load exercise data
 function loadExerciseData() {
     const selectedProfile = profileSelect.value;
-    if (!selectedProfile) {
-        exerciseSection.innerHTML = '';
-        return;
-    }
+    if (!selectedProfile) return;
 
     const dbRef = ref(db, `profiles/${selectedProfile}/exercises`);
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
             const exercises = snapshot.val();
             exerciseSection.innerHTML = '';
-            for (let day in exercises) {
+            for (let exercise in exercises) {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 exerciseDiv.innerHTML = `
-                    <label for="${day}">${day}</label>
-                    <input type="text" id="${day}" class="form-control" value="${exercises[day]}" onchange="updateExercise('${day}', this.value)">
+                    <label for="${exercise}">${exercise}</label>
+                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="updateExercise('${exercise}', this.value)">
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }

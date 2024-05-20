@@ -1,22 +1,140 @@
-// Initialize Firebase
+// Import the necessary Firebase functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
- apiKey: "AIzaSyA7y-oD3BqbRhSOqqBpfBPGWD2MuDk1kx4",
-
-  authDomain: "weeklyexercise-31473.firebaseapp.com",
-
-  projectId: "weeklyexercise-31473",
-
-  storageBucket: "weeklyexercise-31473.appspot.com",
-
-  messagingSenderId: "245366626933",
-
-  appId: "1:245366626933:web:56225d7d6b523121b0f63c",
-
-  measurementId: "G-JD4ZNG6NHY"
+    apiKey: "AIzaSyCVG033ZZhIjMky7Zb2PqsdJb02ay5Fme4",
+    authDomain: "excersicetracker.firebaseapp.com",
+    databaseURL: "https://excersicetracker-default-rtdb.firebaseio.com",
+    projectId: "excersicetracker",
+    storageBucket: "excersicetracker.appspot.com",
+    messagingSenderId: "973586629666",
+    appId: "1:973586629666:web:15f6e3e0b1d43ac040f67b",
+    measurementId: "G-L3M00731C1"
 };
 
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getDatabase(app);
+
+const profileSelect = document.getElementById("profile");
+const newProfileInput = document.getElementById("new-profile");
+const exerciseSection = document.getElementById("exercise-section");
+
+function loadProfiles() {
+    const dbRef = ref(db);
+    get(child(dbRef, `profiles/`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            const profiles = snapshot.val();
+            profileSelect.innerHTML = '';
+            for (let profile in profiles) {
+                const option = document.createElement('option');
+                option.value = profile;
+                option.textContent = profile;
+                profileSelect.appendChild(option);
+            }
+            loadExerciseData();
+        } else {
+            console.log("No profiles available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+function addProfile() {
+    const profileName = newProfileInput.value.trim();
+    if (profileName === '') {
+        alert("Please enter a profile name");
+        return;
+    }
+    set(ref(db, `profiles/${profileName}`), {
+        exercises: {
+            Monday: '',
+            Tuesday: '',
+            Wednesday: '',
+            Thursday: '',
+            Friday: '',
+            Saturday: '',
+            Sunday: ''
+        }
+    }).then(() => {
+        loadProfiles();
+        newProfileInput.value = '';
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+function loadExerciseData() {
+    const selectedProfile = profileSelect.value;
+    if (!selectedProfile) {
+        exerciseSection.innerHTML = '';
+        return;
+    }
+
+    const dbRef = ref(db, `profiles/${selectedProfile}/exercises`);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const exercises = snapshot.val();
+            exerciseSection.innerHTML = '';
+            for (let day in exercises) {
+                const exerciseDiv = document.createElement('div');
+                exerciseDiv.classList.add('form-group');
+                exerciseDiv.innerHTML = `
+                    <label for="${day}">${day}</label>
+                    <input type="text" id="${day}" class="form-control" value="${exercises[day]}" onchange="updateExercise('${day}', this.value)">
+                `;
+                exerciseSection.appendChild(exerciseDiv);
+            }
+        } else {
+            console.log("No exercise data available");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+function updateExercise(day, value) {
+    const selectedProfile = profileSelect.value;
+    if (!selectedProfile) return;
+
+    update(ref(db, `profiles/${selectedProfile}/exercises`), {
+        [day]: value
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+function resetExercises() {
+    const selectedProfile = profileSelect.value;
+    if (!selectedProfile) return;
+
+    const resetData = {
+        Monday: '',
+        Tuesday: '',
+        Wednesday: '',
+        Thursday: '',
+        Friday: '',
+        Saturday: '',
+        Sunday: ''
+    };
+    
+    set(ref(db, `profiles/${selectedProfile}/exercises`), resetData).then(() => {
+        loadExerciseData();
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+// Initial load of profiles
+loadProfiles();
+
+import {database} from 'src/index.js';
+//const database = firebase.database();
 
 document.addEventListener("DOMContentLoaded", () => {
     loadProfiles();

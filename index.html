@@ -5,46 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly Exercise Tracker</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
 </head>
 <body>
-<script type="module">
-
-  // Import the functions you need from the SDKs you need
-
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-
-  // TODO: Add SDKs for Firebase products that you want to use
-
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-
-  // Your web app's Firebase configuration
-
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCVG033ZZhIjMky7Zb2PqsdJb02ay5Fme4",
-    authDomain: "excersicetracker.firebaseapp.com",
-    databaseURL: "https://excersicetracker-default-rtdb.firebaseio.com",
-    projectId: "excersicetracker",
-    storageBucket: "excersicetracker.appspot.com",
-    messagingSenderId: "973586629666",
-    appId: "1:973586629666:web:15f6e3e0b1d43ac040f67b",
-    measurementId: "G-L3M00731C1"
-
-  };
-
-
-  // Initialize Firebase
-
-  const app = initializeApp(firebaseConfig);
-
-  const analytics = getAnalytics(app);
-
-</script>
     <div class="container">
         <h1 class="mt-4 mb-4">Weekly Exercise Tracker</h1>
         <div id="profile-section" class="form-group">
@@ -60,6 +22,6 @@
         </div>
         <button id="reset-button" class="btn btn-danger mt-4" onclick="resetExercises()">Reset Exercises</button>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

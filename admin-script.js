@@ -1,25 +1,25 @@
-// Initialize Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-   apiKey: "AIzaSyA7y-oD3BqbRhSOqqBpfBPGWD2MuDk1kx4",
-
-  authDomain: "weeklyexercise-31473.firebaseapp.com",
-
-  projectId: "weeklyexercise-31473",
-
-  storageBucket: "weeklyexercise-31473.appspot.com",
-
-  messagingSenderId: "245366626933",
-
-  appId: "1:245366626933:web:56225d7d6b523121b0f63c",
-
-  measurementId: "G-JD4ZNG6NHY"
-
-
+    apiKey: "AIzaSyCVG033ZZhIjMky7Zb2PqsdJb02ay5Fme4",
+    authDomain: "excersicetracker.firebaseapp.com",
+    databaseURL: "https://excersicetracker-default-rtdb.firebaseio.com",
+    projectId: "excersicetracker",
+    storageBucket: "excersicetracker.appspot.com",
+    messagingSenderId: "973586629666",
+    appId: "1:973586629666:web:15f6e3e0b1d43ac040f67b",
+    measurementId: "G-L3M00731C1"
 };
 
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getDatabase(app);
 
+// Load exercises on document ready
 document.addEventListener("DOMContentLoaded", () => {
     loadExercises();
 });
@@ -28,31 +28,41 @@ function loadExercises() {
     const exercisesList = document.getElementById("exercises-list");
     exercisesList.innerHTML = "";
 
-    database.ref("exercises").once("value", snapshot => {
-        snapshot.forEach(exercise => {
-            const div = document.createElement("div");
-            div.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+    const dbRef = ref(db, "exercises");
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            snapshot.forEach((childSnapshot) => {
+                const exercise = childSnapshot.key;
+                const reps = childSnapshot.val();
 
-            const name = document.createElement("span");
-            name.textContent = exercise.key;
+                const div = document.createElement("div");
+                div.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
 
-            const total = document.createElement("input");
-            total.type = "number";
-            total.value = exercise.val();
-            total.classList.add("form-control", "w-25", "mr-2");
-            total.onchange = () => updateExerciseTotal(exercise.key, total.value);
+                const name = document.createElement("span");
+                name.textContent = exercise;
 
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.classList.add("btn", "btn-danger");
-            deleteButton.onclick = () => deleteExercise(exercise.key);
+                const total = document.createElement("input");
+                total.type = "number";
+                total.value = reps;
+                total.classList.add("form-control", "w-25", "mr-2");
+                total.onchange = () => updateExerciseTotal(exercise, total.value);
 
-            div.appendChild(name);
-            div.appendChild(total);
-            div.appendChild(deleteButton);
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.classList.add("btn", "btn-danger");
+                deleteButton.onclick = () => deleteExercise(exercise);
 
-            exercisesList.appendChild(div);
-        });
+                div.appendChild(name);
+                div.appendChild(total);
+                div.appendChild(deleteButton);
+
+                exercisesList.appendChild(div);
+            });
+        } else {
+            console.log("No exercises found.");
+        }
+    }).catch((error) => {
+        console.error("Error loading exercises:", error);
     });
 }
 
@@ -65,30 +75,38 @@ function addExercise() {
         return;
     }
 
-    database.ref(`exercises/${name}`).set(total)
+    const exerciseRef = ref(db, `exercises/${name}`);
+    set(exerciseRef, total)
         .then(() => {
             loadExercises();
             document.getElementById("new-exercise-name").value = '';
             document.getElementById("new-exercise-total").value = '';
         })
-        .catch(error => {
-            console.error("Error adding exercise: ", error);
+        .catch((error) => {
+            console.error("Error adding exercise:", error);
         });
 }
 
 function updateExerciseTotal(exercise, total) {
-    database.ref(`exercises/${exercise}`).set(parseInt(total))
-        .catch(error => {
-            console.error(`Error updating exercise ${exercise}: `, error);
+    const exerciseRef = ref(db, `exercises/${exercise}`);
+    set(exerciseRef, parseInt(total))
+        .catch((error) => {
+            console.error(`Error updating exercise ${exercise}:`, error);
         });
 }
 
 function deleteExercise(exercise) {
-    database.ref(`exercises/${exercise}`).remove()
+    const exerciseRef = ref(db, `exercises/${exercise}`);
+    remove(exerciseRef)
         .then(() => {
             loadExercises();
         })
-        .catch(error => {
-            console.error(`Error deleting exercise ${exercise}: `, error);
+        .catch((error) => {
+            console.error(`Error deleting exercise ${exercise}:`, error);
         });
 }
+
+// Attach functions to window object
+window.addExercise = addExercise;
+window.updateExerciseTotal = updateExerciseTotal;
+window.deleteExercise = deleteExercise;

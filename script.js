@@ -111,6 +111,7 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
                     <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="updateExercise('${exercise}', this.value)">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -122,6 +123,26 @@ function loadExerciseData() {
     });
 }
 
+function logExercise(profile, exercise) {
+    const selectedProfileRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
+    get(selectedProfileRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const currentCount = snapshot.val();
+            const updatedCount = currentCount - 1; // Reduce by 1, adjust this logic as needed
+            update(selectedProfileRef, updatedCount).then(() => {
+                console.log(`Exercise ${exercise} logged for profile ${profile}`);
+                // Reload exercise data after updating
+                loadExerciseData();
+            }).catch((error) => {
+                console.error("Error updating exercise count:", error);
+            });
+        } else {
+            console.log("Exercise data not found");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}
 // Function to update exercise data
 function updateExercise(day, value) {
     const selectedProfile = profileSelect.value;

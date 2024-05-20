@@ -1,3 +1,8 @@
+// Import the necessary Firebase functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,11 +17,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getDatabase(app);
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 // Get a reference to the database service
 const database = firebase.database();
-const db = firebase.database();
+
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");
 const exerciseSection = document.getElementById("exercise-section");
@@ -133,6 +143,7 @@ function logExercise(profile, exercise) {
         console.error(error);
     });
 }
+
 // Function to update exercise data
 function updateExercise(day, value) {
     const selectedProfile = profileSelect.value;

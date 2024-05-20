@@ -67,21 +67,30 @@ function addProfile() {
         alert("Please enter a profile name");
         return;
     }
-    set(ref(db, `profiles/${profileName}`), {
+
+    // Create the profile with exercises
+    const profileRef = ref(db, `profiles/${profileName}`);
+    set(profileRef, {
         exercises: {
-            Monday: '',
-            Tuesday: '',
-            Wednesday: '',
-            Thursday: '',
-            Friday: '',
-            Saturday: '',
-            Sunday: ''
+            // Add existing exercises here
         }
     }).then(() => {
-        loadProfiles();
-        newProfileInput.value = '';
-    }).catch((error) => {
-        console.error(error);
+        // Load existing exercises
+        database.ref("exercises").once("value", snapshot => {
+            const exercises = {};
+            snapshot.forEach(exercise => {
+                exercises[exercise.key] = 0; // Initialize with 0 reps
+            });
+            // Set the exercises for the new profile
+            return update(ref(db, `profiles/${profileName}/exercises`), exercises);
+        }).then(() => {
+            // Reload profiles and exercise data
+            loadProfiles();
+            loadExerciseData();
+            newProfileInput.value = '';
+        }).catch(error => {
+            console.error("Error adding profile:", error);
+        });
     });
 }
 

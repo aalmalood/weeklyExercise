@@ -109,8 +109,8 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
                     <label id="${exercise}Remaining">${exercises[exercise]}</label>
-                    <input type="text" id="${exercise}" class="form-control" value="0" onchange="logExercise('${profile}', '${exercise}', this.value)">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}', this.value)" class="btn btn-primary">Log</button>
+                    <input type="text" id="${exercise}" class="form-control" value="0" onchange="logExercise('${profile}', '${exercise}')">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -127,7 +127,10 @@ window.logExercise = function(profile, exercise, value) {
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {
             const currentCount = snapshot.val();
-            const updatedCount = currentCount - parseInt(value); // Reduce by the value entered
+            const myElement = document.getElementById(exercise);
+            console.log("currentCount" , currentCount);
+            console.log("myElementt" , myElement.value);
+            const updatedCount = currentCount - parseInt(myElement.value); // Reduce by the value entered
             update(selectedProfileRef, updatedCount).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating

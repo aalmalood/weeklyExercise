@@ -131,6 +131,7 @@ window.logExercise = function(profile, exercise) {
 
             const updateData = {};
             updateData[exercise] = updatedCount;
+            console.log("updateData",updateData);
 
             update(ref(db, `profiles/${profile}/exercises/${exercise}`), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);

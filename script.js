@@ -127,6 +127,7 @@ window.logExercise = function(profile, exercise) {
         if (snapshot.exists()) {
             const currentCount = snapshot.val();
             const myElement = document.getElementById(exercise);
+            const rips = parseInt(myElement.value);
             const updatedCount = currentCount - parseInt(myElement.value); // Reduce by the value entered
 
             const updateData = {};
@@ -140,6 +141,23 @@ window.logExercise = function(profile, exercise) {
             }).catch((error) => {
                 console.error("Error updating exercise count:", error);
             });
+
+            const logRef = ref(db, `profiles/${profileName}/logs`);
+            set(logRef, {
+                date: new Date().getTime(),
+                exercise: exercise,
+                currentCount: currentCount,
+                reduced: rips,
+                newCount: updatedCount
+            }).then(() => {
+                // Reload profiles and exercise data
+                //loadProfiles();
+                loadExerciseData();
+               // newProfileInput.value = '';
+            }).catch(error => {
+                console.error("Error adding profile:", error);
+            });
+            
         } else {
             console.log("Exercise data not found");
         }

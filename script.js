@@ -109,7 +109,7 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
                     <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="logExercise('${profile}', '${exercise}')">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}'" class="btn btn-primary">Log</button>
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -126,7 +126,7 @@ window.logExercise = function(profile, exercise) {
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {
             const currentCount = snapshot.val();
-            const exerciseValue = document.getElementById("exercise").value;
+            const exerciseValue = document.getElementById(exercise).value;
             const updatedCount = currentCount - parseInt(exerciseValue); // Reduce by the value entered
             update(selectedProfileRef, updatedCount).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);

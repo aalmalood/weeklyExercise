@@ -222,28 +222,12 @@ function loadLogs(profile) {
             logsList.innerHTML = '';
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
-                console.log("log", log);
-                console.log("log", log[date]);
-                console.log("log", log.exercise);
-                console.log("log", log.currentCount);
-                console.log("log", log.reduced);
-                console.log("log", log.newCount);
-                // Check if properties exist, if not, assign an empty string
-                const date = log.date ? log.date : '';
-                const exercise = log.exercise ? log.exercise : '';
-                const currentCount = log.currentCount ? log.currentCount : '';
-                const reduced = log.reduced ? log.reduced : '';
-                const newCount = log.newCount ? log.newCount : '';
-
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <label>${date}</label>
-                        <label>${exercise}</label>
-                        <label>${currentCount}</label>
-                        <label>${reduced}</label>
-                        <label>${newCount}</label>
+                        <label>${log}</label>
+                       
                     </div>
                 `;
                 logsList.appendChild(div);

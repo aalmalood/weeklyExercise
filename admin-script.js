@@ -211,22 +211,6 @@ function deleteExercise(profile, exercise) {
         console.error("Error deleting exercise:", error);
     });
 }
-
-// Attach functions to the window object to make them globally accessible
-window.addProfile = addProfile;
-window.deleteProfile = deleteProfile;
-window.setActiveProfile = setActiveProfile;
-window.loadExercises = loadExercises;
-window.loadLogs = loadLogs;
-window.addExercise = addExercise;
-window.updateExercise = updateExercise;
-window.deleteExercise = deleteExercise;
-
-// Initial load of profiles after authentication
-document.addEventListener("DOMContentLoaded", () => {
-    authenticate();
-});
-
 // Function to load exercises for a selected profile
 function loadLogs(profile) {
     const dbRef = ref(db, `profiles/${profile}/logs`);
@@ -246,7 +230,7 @@ function loadLogs(profile) {
                         <label>${log[log]}</label>
                     </div>
                 `;
-                exercisesList.appendChild(div);
+                logsList.appendChild(div);
             }
         } else {
             console.log("No logs available for this profile");
@@ -255,3 +239,20 @@ function loadLogs(profile) {
         console.error(error);
     });
 }
+
+// Attach functions to the window object to make them globally accessible
+window.addProfile = addProfile;
+window.deleteProfile = deleteProfile;
+window.setActiveProfile = setActiveProfile;
+window.loadExercises = loadExercises;
+window.loadLogs = loadLogs;
+window.addExercise = addExercise;
+window.updateExercise = updateExercise;
+window.deleteExercise = deleteExercise;
+
+// Initial load of profiles after authentication
+document.addEventListener("DOMContentLoaded", () => {
+    authenticate();
+});
+
+

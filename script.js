@@ -108,8 +108,8 @@ function loadExerciseData() {
                 exerciseDiv.classList.add('form-group');
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
-                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="logExercise('${profile}', '${exercise}', ${exercise[value]})">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}', ${exercise[value]})" class="btn btn-primary">Log</button>
+                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="logExercise('${profile}', '${exercise}')">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}'" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -121,12 +121,13 @@ function loadExerciseData() {
     });
 }
 
-window.logExercise = function(profile, exercise, value) {
+window.logExercise = function(profile, exercise) {
     const selectedProfileRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {
             const currentCount = snapshot.val();
-            const updatedCount = currentCount - parseInt(value); // Reduce by the value entered
+            const exerciseValue = document.getElementById("exercise").value;
+            const updatedCount = currentCount - parseInt(exerciseValue); // Reduce by the value entered
             update(selectedProfileRef, updatedCount).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating

@@ -22,6 +22,8 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+let activeProfile = null; // Global variable to store the active profile
+
 // Function to authenticate anonymously
 function authenticate() {
     signInAnonymously(auth)
@@ -47,7 +49,7 @@ function loadProfiles() {
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>${profile}</span>
+                        <span onclick="setActiveProfile('${profile}')">${profile}</span>
                         <button onclick="deleteProfile('${profile}')" class="btn btn-danger btn-sm">Delete</button>
                     </div>
                     <div class="ml-4 mt-2">
@@ -62,6 +64,16 @@ function loadProfiles() {
     }).catch((error) => {
         console.error(error);
     });
+}
+
+// Function to set the active profile
+function setActiveProfile(profile) {
+    activeProfile = profile;
+    document.querySelectorAll('#profiles-list .list-group-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.querySelector(`#profiles-list .list-group-item span[onclick="setActiveProfile('${profile}')"]`).parentNode.parentNode.classList.add('active');
+    loadExercises(profile);
 }
 
 // Function to add a new profile
@@ -123,23 +135,21 @@ function loadExercises(profile) {
 
 // Function to add a new exercise to a profile
 function addExercise() {
-    const profileElement = document.querySelector("#profiles-list .list-group-item.active span");
-    if (!profileElement) {
+    if (!activeProfile) {
         alert("Please select a profile to add exercise to");
         return;
     }
-    const profile = profileElement.textContent;
     const exerciseName = document.getElementById("new-exercise-name").value.trim();
     const totalReps = parseInt(document.getElementById("new-exercise-total").value);
 
-    if (!profile || !exerciseName || totalReps <= 0) {
+    if (!exerciseName || totalReps <= 0) {
         alert("Please enter a valid exercise name and total reps");
         return;
     }
 
-    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exerciseName}`);
+    const exerciseRef = ref(db, `profiles/${activeProfile}/exercises/${exerciseName}`);
     set(exerciseRef, totalReps).then(() => {
-        loadExercises(profile);
+        loadExercises(activeProfile);
         document.getElementById("new-exercise-name").value = '';
         document.getElementById("new-exercise-total").value = '';
     }).catch((error) => {
@@ -168,6 +178,7 @@ function deleteExercise(profile, exercise) {
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;
 window.deleteProfile = deleteProfile;
+window.setActiveProfile = setActiveProfile;
 window.loadExercises = loadExercises;
 window.addExercise = addExercise;
 window.updateExercise = updateExercise;

@@ -223,7 +223,7 @@ function loadLogs(profile) {
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
                 console.log("log", log);
-                console.log("log", log.date);
+                console.log("log", log[date]);
                 console.log("log", log.exercise);
                 console.log("log", log.currentCount);
                 console.log("log", log.reduced);

@@ -85,7 +85,7 @@ function addProfile() {
         alert("Please enter a profile name");
         return;
     }
-
+    console.log("profileNamee" , profileName);
    /* const profileRef = ref(db, `profiles/${profileName}`);
     set(profileRef, {
         exercises: {}
@@ -98,9 +98,11 @@ function addProfile() {
      // Create the profile with exercises
      const profileRef = ref(db, `profiles/${profileName}`);
      set(profileRef, {
+        
          exercises: {}
      }).then(() => {
          // Load existing exercises
+         console.log("profileNamee in then" , profileName);
          const dbRef = ref(db, `exercises`);
          get(dbRef).then(snapshot => {
              const exercises = {};
@@ -114,6 +116,7 @@ function addProfile() {
              
              
          }).then(() => {
+            console.log("profileNamee in then then " , profileName);
              // Reload profiles and exercise data
              loadProfiles();
              //loadExerciseData();

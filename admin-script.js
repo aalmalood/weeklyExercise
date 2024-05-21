@@ -86,7 +86,7 @@ function addProfile() {
         return;
     }
 
-    const profileRef = ref(db, `profiles/${profileName}`);
+   /* const profileRef = ref(db, `profiles/${profileName}`);
     set(profileRef, {
         exercises: {}
     }).then(() => {
@@ -94,7 +94,34 @@ function addProfile() {
         document.getElementById("new-profile-name").value = '';
     }).catch((error) => {
         console.error("Error adding profile:", error);
-    });
+    });*/
+     // Create the profile with exercises
+     const profileRef = ref(db, `profiles/${profileName}`);
+     set(profileRef, {
+         exercises: {}
+     }).then(() => {
+         // Load existing exercises
+         const dbRef = ref(db, `exercises`);
+         get(dbRef).then(snapshot => {
+             const exercises = {};
+             snapshot.forEach(exercise => {
+                 exercises[exercise.key] = 0; // Initialize with 0 reps
+             });
+             // Set the exercises for the new profile
+             //loadProfiles();
+             set(ref(db, `profiles/${profileName}/exercises`), exercises);
+             
+             
+             
+         }).then(() => {
+             // Reload profiles and exercise data
+             loadProfiles();
+             //loadExerciseData();
+             document.getElementById("new-profile-name").value = '';
+         }).catch(error => {
+             console.error("Error adding profile:", error);
+         });
+     });
 }
 
 // Function to delete a profile

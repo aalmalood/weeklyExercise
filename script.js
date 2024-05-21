@@ -62,7 +62,6 @@ function loadProfiles() {
         console.error(error);
     });
 }
-
 function addProfile() {
     const profileName = newProfileInput.value.trim();
     if (profileName === '') {
@@ -77,7 +76,7 @@ function addProfile() {
     }).then(() => {
         // Load existing exercises
         const dbRef = ref(db, `exercises`);
-        dbRef("exercises").once("value", snapshot => {
+        get(dbRef).then(snapshot => { // Corrected from dbRef("exercises").once(...)
             const exercises = {};
             snapshot.forEach(exercise => {
                 exercises[exercise.key] = 0; // Initialize with 0 reps

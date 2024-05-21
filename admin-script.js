@@ -158,9 +158,11 @@ function loadExercises(profile) {
                 `;
                 exercisesList.appendChild(div);
             }
+            loadLogs(activeProfile);
         } else {
             console.log("No exercises available for this profile");
         }
+        
     }).catch((error) => {
         console.error(error);
     });

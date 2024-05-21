@@ -133,7 +133,7 @@ window.logExercise = function(profile, exercise) {
             updateData[exercise] = updatedCount;
             console.log("updateData",updateData);
 
-            update(ref(db, `profiles/${profile}/exercises/${exercise}`), updateData).then(() => {
+            update(ref(db, `profiles/${profile}/exercises/`), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating
                 loadExerciseData();

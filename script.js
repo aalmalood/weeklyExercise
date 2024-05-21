@@ -122,7 +122,7 @@ function loadExerciseData() {
     });
 }
 
-window.logExercise = function(profile, exercise, value) {
+window.logExercise = function(profile, exercise) {
     const selectedProfileRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {

@@ -222,21 +222,17 @@ function loadLogs(profile) {
             logsList.innerHTML = '';
             const div = document.createElement('div');
             div.classList.add('list-group-item');
+            const datee = new Date(logs.date).toLocaleString()
             div.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center">
-            `;
-            for (let logKey in logs) {
-                const log = logs[logKey]; // Access each log object
-                div.innerHTML += `
-                        <label>${log}</label>
-                     
-                `;
-                
-            }
-           
-            div.innerHTML += `  
+                <label>date: ${datee}</label>
+                <label>exercise: ${logs.exercise}</label>
+                <label>currentCount: ${logs.currentCount}</label>
+                <label>newCount: ${logs.newCount}</label>
+                <label>reduced: ${logs.reduced}</label>
                 </div>
             `;
+            
             logsList.appendChild(div);
         } else {
             console.log("No logs available for this profile");

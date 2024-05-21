@@ -226,8 +226,11 @@ function loadLogs(profile) {
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        
-                        <label>${log[log]}</label>
+                        <label>${log[date]}</label>
+                        <label>${log[exercise]}</label>
+                        <label>${log[currentCount]}</label>
+                        <label>${log[reduced]}</label>
+                        <label>${log[newCount]}</label>
                     </div>
                 `;
                 logsList.appendChild(div);

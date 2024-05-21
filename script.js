@@ -23,8 +23,6 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // Get a reference to the database service
-//const database = getDatabase(app);
-
 const profileSelect = document.getElementById("profile");
 const newProfileInput = document.getElementById("new-profile");
 const exerciseSection = document.getElementById("exercise-section");
@@ -62,6 +60,7 @@ function loadProfiles() {
         console.error(error);
     });
 }
+
 function addProfile() {
     const profileName = newProfileInput.value.trim();
     if (profileName === '') {
@@ -76,7 +75,7 @@ function addProfile() {
     }).then(() => {
         // Load existing exercises
         const dbRef = ref(db, `exercises`);
-        get(dbRef).then(snapshot => { // Corrected from dbRef("exercises").once(...)
+        get(dbRef).then(snapshot => {
             const exercises = {};
             snapshot.forEach(exercise => {
                 exercises[exercise.key] = 0; // Initialize with 0 reps
@@ -109,7 +108,7 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
                     <label id="${exercise}Remaining">${exercises[exercise]}</label>
-                    <input type="text" id="${exercise}" class="form-control" value="0" onchange="logExercise('${profile}', '${exercise}')">
+                    <input type="text" id="${exercise}" class="form-control" value="0">
                     <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
@@ -128,10 +127,12 @@ window.logExercise = function(profile, exercise) {
         if (snapshot.exists()) {
             const currentCount = snapshot.val();
             const myElement = document.getElementById(exercise);
-            console.log("currentCount" , currentCount);
-            console.log("myElementt" , myElement.value);
             const updatedCount = currentCount - parseInt(myElement.value); // Reduce by the value entered
-            update(selectedProfileRef, updatedCount).then(() => {
+
+            const updateData = {};
+            updateData[exercise] = updatedCount;
+
+            update(ref(db, `profiles/${profile}/exercises`), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating
                 loadExerciseData();

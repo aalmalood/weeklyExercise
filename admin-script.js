@@ -220,6 +220,18 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
+            const div = document.createElement('div');
+                div.classList.add('list-group-item');
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label>date</label>
+                        <label>exercise</label>
+                        <label>current Count</label>
+                        <label>reduced</label>
+                        <label>new Count</label>
+                    </div>
+                `;
+                logsList.appendChild(div);
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
                console.log("log", log);

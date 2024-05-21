@@ -223,7 +223,11 @@ function loadLogs(profile) {
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
                 console.log("log", log);
-
+                console.log("log", log.date);
+                console.log("log", log.exercise);
+                console.log("log", log.currentCount);
+                console.log("log", log.reduced);
+                console.log("log", log.newCount);
                 // Check if properties exist, if not, assign an empty string
                 const date = log.date ? log.date : '';
                 const exercise = log.exercise ? log.exercise : '';

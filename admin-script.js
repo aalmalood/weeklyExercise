@@ -69,7 +69,7 @@ function loadProfiles() {
 // Function to set the active profile
 function setActiveProfile(profile) {
     activeProfile = profile;
-    setActiveProfile(profile);
+    //setActiveProfile(profile);
     console.log("profile" , profile);
     document.querySelectorAll('#profiles-list .list-group-item').forEach(item => {
         item.classList.remove('active');
@@ -110,6 +110,7 @@ function deleteProfile(profile) {
 // Function to load exercises for a selected profile
 function loadExercises(profile) {
     const dbRef = ref(db, `profiles/${profile}/exercises`);
+    setActiveProfile(profile);
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
             const exercises = snapshot.val();

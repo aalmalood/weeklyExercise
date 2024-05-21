@@ -183,6 +183,7 @@ function addExercise() {
     const exerciseRef = ref(db, `profiles/${activeProfile}/exercises/${exerciseName}`);
     set(exerciseRef, totalReps).then(() => {
         loadExercises(activeProfile);
+        loadLogs(activeProfile);
         document.getElementById("new-exercise-name").value = '';
         document.getElementById("new-exercise-total").value = '';
     }).catch((error) => {
@@ -203,6 +204,7 @@ function deleteExercise(profile, exercise) {
     const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
     remove(exerciseRef).then(() => {
         loadExercises(profile);
+        loadLogs(profile);
     }).catch((error) => {
         console.error("Error deleting exercise:", error);
     });
@@ -213,6 +215,7 @@ window.addProfile = addProfile;
 window.deleteProfile = deleteProfile;
 window.setActiveProfile = setActiveProfile;
 window.loadExercises = loadExercises;
+window.loadLogs = loadLogs;
 window.addExercise = addExercise;
 window.updateExercise = updateExercise;
 window.deleteExercise = deleteExercise;
@@ -221,3 +224,32 @@ window.deleteExercise = deleteExercise;
 document.addEventListener("DOMContentLoaded", () => {
     authenticate();
 });
+
+// Function to load exercises for a selected profile
+function loadLogs(profile) {
+    const dbRef = ref(db, `profiles/${profile}/logs`);
+    setActiveProfile(profile);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const logs = snapshot.val();
+            const logsList = document.getElementById("log-list");
+            logsList.innerHTML = '';
+            for (let log in logs) {
+                console.log("log",log);
+                const div = document.createElement('div');
+                div.classList.add('list-group-item');
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        
+                        <label>${log[log]}</label>
+                    </div>
+                `;
+                exercisesList.appendChild(div);
+            }
+        } else {
+            console.log("No logs available for this profile");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}

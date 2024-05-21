@@ -223,15 +223,23 @@ function loadLogs(profile) {
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
                 console.log("log", log);
+
+                // Check if properties exist, if not, assign an empty string
+                const date = log.date ? log.date : '';
+                const exercise = log.exercise ? log.exercise : '';
+                const currentCount = log.currentCount ? log.currentCount : '';
+                const reduced = log.reduced ? log.reduced : '';
+                const newCount = log.newCount ? log.newCount : '';
+
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <label>${log.date}</label>
-                        <label>${log.exercise}</label>
-                        <label>${log.currentCount}</label>
-                        <label>${log.reduced}</label>
-                        <label>${log.newCount}</label>
+                        <label>${date}</label>
+                        <label>${exercise}</label>
+                        <label>${currentCount}</label>
+                        <label>${reduced}</label>
+                        <label>${newCount}</label>
                     </div>
                 `;
                 logsList.appendChild(div);
@@ -243,6 +251,7 @@ function loadLogs(profile) {
         console.error(error);
     });
 }
+
 
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;

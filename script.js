@@ -142,7 +142,7 @@ window.logExercise = function(profile, exercise) {
                 console.error("Error updating exercise count:", error);
             });
 
-            const logRef = ref(db, `profiles/${profileName}/logs`);
+            const logRef = ref(db, `profiles/${profile}/logs`);
             set(logRef, {
                 date: new Date().getTime(),
                 exercise: exercise,
@@ -155,7 +155,7 @@ window.logExercise = function(profile, exercise) {
                 loadExerciseData();
                // newProfileInput.value = '';
             }).catch(error => {
-                console.error("Error adding profile:", error);
+                console.error("Error adding profile log:", error);
             });
             
         } else {

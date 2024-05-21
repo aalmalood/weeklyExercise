@@ -224,7 +224,8 @@ function loadLogs(profile) {
                 const log = logs[logKey]; // Access each log object
                
                 // Check if properties exist, if not, assign an empty string
-                const date = log.date ? log.date : '';
+                let date = log.date ? log.date : '';
+                date = new Date(log.date).toLocaleString();
                 const exercise = log.exercise ? log.exercise : '';
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
@@ -234,7 +235,7 @@ function loadLogs(profile) {
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <label>${log}</label>
+                        <label>${date}</label>
                         <label>${exercise}</label>
                         <label>${currentCount}</label>
                         <label>${reduced}</label>

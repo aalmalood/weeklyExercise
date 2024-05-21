@@ -220,13 +220,14 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
-            for (let log in logs) {
-                console.log("log",log);
+            for (let logKey in logs) {
+                const log = logs[logKey]; // Access each log object
+                console.log("log", log);
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <label>${log.date.val}</label>
+                        <label>${log.date}</label>
                         <label>${log.exercise}</label>
                         <label>${log.currentCount}</label>
                         <label>${log.reduced}</label>

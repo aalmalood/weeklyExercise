@@ -141,10 +141,10 @@ window.logExercise = function(profile, exercise) {
             }).catch((error) => {
                 console.error("Error updating exercise count:", error);
             });
-
-            const logRef = ref(db, `profiles/${profile}/logs/`);
+            const ddate = new Date().getTime();
+            const logRef = ref(db, `profiles/${profile}/logs/${ddate}`);
             set(logRef, {
-                date: new Date().getTime(),
+                date: ddate,
                 exercise: exercise,
                 currentCount: currentCount,
                 reduced: rips,

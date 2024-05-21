@@ -69,6 +69,8 @@ function loadProfiles() {
 // Function to set the active profile
 function setActiveProfile(profile) {
     activeProfile = profile;
+    setActiveProfile(profile);
+    console.log("profile" , profile);
     document.querySelectorAll('#profiles-list .list-group-item').forEach(item => {
         item.classList.remove('active');
     });

@@ -220,18 +220,24 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
+            const div = document.createElement('div');
+            div.classList.add('list-group-item');
+            div.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+            `;
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
-                const div = document.createElement('div');
-                div.classList.add('list-group-item');
-                div.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center">
+                div.innerHTML += `
                         <label>${log}</label>
-                       
-                    </div>
+                     
                 `;
-                logsList.appendChild(div);
+                
             }
+           
+            div.innerHTML += `  
+                </div>
+            `;
+            logsList.appendChild(div);
         } else {
             console.log("No logs available for this profile");
         }

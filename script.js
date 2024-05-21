@@ -108,8 +108,9 @@ function loadExerciseData() {
                 exerciseDiv.classList.add('form-group');
                 exerciseDiv.innerHTML = `
                     <label for="${exercise}">${exercise}</label>
-                    <input type="text" id="${exercise}" class="form-control" value="${exercises[exercise]}" onchange="logExercise('${profile}', '${exercise}', ${exercises[exercise]})">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}', ${exercises[exercise]})" class="btn btn-primary">Log</button>
+                    <label id="${exercise}Remaining">${exercises[exercise]}</label>
+                    <input type="text" id="${exercise}" class="form-control" value="0" onchange="logExercise('${profile}', '${exercise}', this.value)">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}', this.value)" class="btn btn-primary">Log</button>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }

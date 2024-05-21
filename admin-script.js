@@ -123,12 +123,17 @@ function loadExercises(profile) {
 
 // Function to add a new exercise to a profile
 function addExercise() {
-    const profile = document.querySelector("#profiles-list .list-group-item.active span").textContent;
+    const profileElement = document.querySelector("#profiles-list .list-group-item.active span");
+    if (!profileElement) {
+        alert("Please select a profile to add exercise to");
+        return;
+    }
+    const profile = profileElement.textContent;
     const exerciseName = document.getElementById("new-exercise-name").value.trim();
     const totalReps = parseInt(document.getElementById("new-exercise-total").value);
 
     if (!profile || !exerciseName || totalReps <= 0) {
-        alert("Please select a profile and enter valid exercise name and total reps");
+        alert("Please enter a valid exercise name and total reps");
         return;
     }
 

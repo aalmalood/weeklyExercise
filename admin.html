@@ -3,29 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page - Manage Exercises</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Add these lines to include Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-
+    <title>Admin - Exercise Tracker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-4 mb-4">Admin Page - Manage Exercises</h1>
-        <div id="manage-exercises">
-            <h2>Add Exercise</h2>
-            <div class="form-group">
-                <input type="text" id="new-exercise-name" class="form-control mb-2" placeholder="Exercise Name">
-                <input type="number" id="new-exercise-total" class="form-control mb-2" placeholder="Total Reps">
-                <button onclick="addExercise()" class="btn btn-primary">Add Exercise</button>
-            </div>
-            <h2>Existing Exercises</h2>
-            <div id="exercises-list" class="list-group">
-                <!-- Existing exercises will be populated here -->
-            </div>
+        <h1>Admin - Exercise Tracker</h1>
+        <h2>Profiles</h2>
+        <div id="profiles-list" class="list-group mb-4"></div>
+
+        <h2>Add Profile</h2>
+        <div class="form-group">
+            <input type="text" id="new-profile-name" class="form-control" placeholder="Profile Name">
+            <button onclick="addProfile()" class="btn btn-primary mt-2">Add Profile</button>
+        </div>
+
+        <h2>Exercises for Selected Profile</h2>
+        <div id="exercises-list" class="list-group mb-4"></div>
+
+        <h2>Add Exercise</h2>
+        <div class="form-group">
+            <input type="text" id="new-exercise-name" class="form-control" placeholder="Exercise Name">
+            <input type="number" id="new-exercise-total" class="form-control mt-2" placeholder="Total Reps">
+            <button onclick="addExercise()" class="btn btn-primary mt-2">Add Exercise</button>
         </div>
     </div>
-    <script type="module" src="admin-script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+    <script src="admin-script.js"></script>
 </body>
 </html>

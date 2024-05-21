@@ -1,6 +1,8 @@
+// Import the necessary Firebase functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,101 +19,156 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const auth = getAuth(app);
 const db = getDatabase(app);
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
 
-// Get a reference to the database service
-const database = firebase.database();
+// Function to authenticate anonymously
+function authenticate() {
+    signInAnonymously(auth)
+        .then(() => {
+            console.log("Signed in anonymously");
+            loadProfiles();
+        })
+        .catch((error) => {
+            console.error("Error signing in anonymously:", error);
+        });
+}
 
-// Load exercises on document ready
-document.addEventListener("DOMContentLoaded", () => {
-    loadExercises();
-});
-
-function loadExercises() {
-    const exercisesList = document.getElementById("exercises-list");
-    exercisesList.innerHTML = "";
-
-    const dbRef = ref(db, "exercises");
+// Function to load profiles
+function loadProfiles() {
+    const dbRef = ref(db, 'profiles/');
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
-            snapshot.forEach((childSnapshot) => {
-                const exercise = childSnapshot.key;
-                const reps = childSnapshot.val();
-
-                const div = document.createElement("div");
-                div.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-
-                const name = document.createElement("span");
-                name.textContent = exercise;
-
-                const total = document.createElement("input");
-                total.type = "number";
-                total.value = reps;
-                total.classList.add("form-control", "w-25", "mr-2");
-                total.onchange = () => updateExerciseTotal(exercise, total.value);
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.classList.add("btn", "btn-danger");
-                deleteButton.onclick = () => deleteExercise(exercise);
-
-                div.appendChild(name);
-                div.appendChild(total);
-                div.appendChild(deleteButton);
-
-                exercisesList.appendChild(div);
-            });
+            const profiles = snapshot.val();
+            const profilesList = document.getElementById("profiles-list");
+            profilesList.innerHTML = '';
+            for (let profile in profiles) {
+                const div = document.createElement('div');
+                div.classList.add('list-group-item');
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${profile}</span>
+                        <button onclick="deleteProfile('${profile}')" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                    <div class="ml-4 mt-2">
+                        <button onclick="loadExercises('${profile}')" class="btn btn-secondary btn-sm">Manage Exercises</button>
+                    </div>
+                `;
+                profilesList.appendChild(div);
+            }
         } else {
-            console.log("No exercises found.");
+            console.log("No profiles available");
         }
     }).catch((error) => {
-        console.error("Error loading exercises:", error);
+        console.error(error);
     });
 }
 
-function addExercise() {
-    const name = document.getElementById("new-exercise-name").value.trim();
-    const total = parseInt(document.getElementById("new-exercise-total").value);
-
-    if (!name || total <= 0) {
-        alert("Please enter a valid exercise name and total reps.");
+// Function to add a new profile
+function addProfile() {
+    const profileName = document.getElementById("new-profile-name").value.trim();
+    if (profileName === '') {
+        alert("Please enter a profile name");
         return;
     }
 
-    const exerciseRef = ref(db, `exercises/${name}`);
-    set(exerciseRef, total)
-        .then(() => {
-            loadExercises();
-            document.getElementById("new-exercise-name").value = '';
-            document.getElementById("new-exercise-total").value = '';
-        })
-        .catch((error) => {
-            console.error("Error adding exercise:", error);
-        });
+    const profileRef = ref(db, `profiles/${profileName}`);
+    set(profileRef, {
+        exercises: {}
+    }).then(() => {
+        loadProfiles();
+        document.getElementById("new-profile-name").value = '';
+    }).catch((error) => {
+        console.error("Error adding profile:", error);
+    });
 }
 
-function updateExerciseTotal(exercise, total) {
-    const exerciseRef = ref(db, `exercises/${exercise}`);
-    set(exerciseRef, parseInt(total))
-        .catch((error) => {
-            console.error(`Error updating exercise ${exercise}:`, error);
-        });
+// Function to delete a profile
+function deleteProfile(profile) {
+    const profileRef = ref(db, `profiles/${profile}`);
+    remove(profileRef).then(() => {
+        loadProfiles();
+    }).catch((error) => {
+        console.error("Error deleting profile:", error);
+    });
 }
 
-function deleteExercise(exercise) {
-    const exerciseRef = ref(db, `exercises/${exercise}`);
-    remove(exerciseRef)
-        .then(() => {
-            loadExercises();
-        })
-        .catch((error) => {
-            console.error(`Error deleting exercise ${exercise}:`, error);
-        });
+// Function to load exercises for a selected profile
+function loadExercises(profile) {
+    const dbRef = ref(db, `profiles/${profile}/exercises`);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const exercises = snapshot.val();
+            const exercisesList = document.getElementById("exercises-list");
+            exercisesList.innerHTML = '';
+            for (let exercise in exercises) {
+                const div = document.createElement('div');
+                div.classList.add('list-group-item');
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${exercise}</span>
+                        <input type="number" value="${exercises[exercise]}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                `;
+                exercisesList.appendChild(div);
+            }
+        } else {
+            console.log("No exercises available for this profile");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
 }
 
-// Attach functions to window object
+// Function to add a new exercise to a profile
+function addExercise() {
+    const profile = document.querySelector("#profiles-list .list-group-item.active span").textContent;
+    const exerciseName = document.getElementById("new-exercise-name").value.trim();
+    const totalReps = parseInt(document.getElementById("new-exercise-total").value);
+
+    if (!profile || !exerciseName || totalReps <= 0) {
+        alert("Please select a profile and enter valid exercise name and total reps");
+        return;
+    }
+
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exerciseName}`);
+    set(exerciseRef, totalReps).then(() => {
+        loadExercises(profile);
+        document.getElementById("new-exercise-name").value = '';
+        document.getElementById("new-exercise-total").value = '';
+    }).catch((error) => {
+        console.error("Error adding exercise:", error);
+    });
+}
+
+// Function to update an exercise's total reps
+function updateExercise(profile, exercise, total) {
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
+    set(exerciseRef, parseInt(total)).catch((error) => {
+        console.error("Error updating exercise:", error);
+    });
+}
+
+// Function to delete an exercise from a profile
+function deleteExercise(profile, exercise) {
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
+    remove(exerciseRef).then(() => {
+        loadExercises(profile);
+    }).catch((error) => {
+        console.error("Error deleting exercise:", error);
+    });
+}
+
+// Attach functions to the window object to make them globally accessible
+window.addProfile = addProfile;
+window.deleteProfile = deleteProfile;
+window.loadExercises = loadExercises;
 window.addExercise = addExercise;
-window.updateExerciseTotal = updateExerciseTotal;
+window.updateExercise = updateExercise;
 window.deleteExercise = deleteExercise;
+
+// Initial load of profiles after authentication
+document.addEventListener("DOMContentLoaded", () => {
+    authenticate();
+});

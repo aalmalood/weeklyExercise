@@ -75,7 +75,7 @@ function setActiveProfile(profile) {
         item.classList.remove('active');
     });
     document.querySelector(`#profiles-list .list-group-item span[onclick="setActiveProfile('${profile}')"]`).parentNode.parentNode.classList.add('active');
-    loadExercises(profile);
+    //loadExercises(profile);
 }
 
 // Function to add a new profile

@@ -266,8 +266,8 @@ function loadLogs(profile) {
                 logsList.appendChild(div);
             }
             const tr = document.createElement('tr');
-                div.classList.add('list-group-item');
-                div.innerHTML = `
+               
+                tr.innerHTML = `
                         </tbody>
                     </table>
                 `;

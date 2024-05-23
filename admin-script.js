@@ -256,7 +256,6 @@ function loadLogs(profile) {
                             <th scope="row">${date}</th>
                             <th scope="row">${exercise}</th>
                             <th scope="row">${currentCount}</th>
-                            <th scope="row">${currentCount}</th>
                             <th scope="row">${reduced}</th>
                             <th scope="row">${newCount}</th>
                         

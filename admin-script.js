@@ -237,7 +237,7 @@ function loadLogs(profile) {
                     </thead>
                     <tbody>
                 `;
-                logsList.appendChild(div);
+                
             for (let logKey in logs) {
                 const log = logs[logKey]; // Access each log object
                console.log("log", log);
@@ -250,9 +250,8 @@ function loadLogs(profile) {
                 const reduced = log.reduced ? log.reduced : '';
                 const newCount = log.newCount ? log.newCount : '';
 
-                const div = document.createElement('tr');
                
-                div.innerHTML = `
+                div.innerHTML = div.innerHTML + `
                     
                         <tr>
                             <th scope="row">${date}</th>
@@ -264,16 +263,14 @@ function loadLogs(profile) {
                         
                         </tr>
                 `;
-                logsList.appendChild(div);
             }
-            const tr = document.createElement('tr');
+            
                
-                tr.innerHTML = `
+                div.innerHTML = div.innerHTML + `
                         </tbody>
                     </table>
                 `;
-                logsList.appendChild(tr);
-
+                logsList.appendChild(div);
         } else {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';

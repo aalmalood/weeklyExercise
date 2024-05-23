@@ -221,7 +221,8 @@ function loadLogs(profile) {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
             const div = document.createElement('table');
-            div.classList.add('table table-striped');    
+            div.classList.add('table');    
+            div.classList.add('table-striped');
                 div.innerHTML = `
                 <table>
                     <thead>

@@ -265,13 +265,13 @@ function loadLogs(profile) {
                 `;
                 logsList.appendChild(div);
             }
-            const div = document.createElement('tr');
+            const tr = document.createElement('tr');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                         </tbody>
                     </table>
                 `;
-                logsList.appendChild(div);
+                logsList.appendChild(tr);
 
         } else {
             const logsList = document.getElementById("log-list");

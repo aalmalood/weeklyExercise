@@ -221,7 +221,7 @@ function loadLogs(profile) {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
             const div = document.createElement('table');
-                div.classList.add('list-group-item');
+                
                 div.innerHTML = `
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
                 <table class="table">
@@ -251,7 +251,7 @@ function loadLogs(profile) {
                 const newCount = log.newCount ? log.newCount : '';
 
                 const div = document.createElement('tr');
-                div.classList.add('list-group-item');
+               
                 div.innerHTML = `
                     
                         <tr>

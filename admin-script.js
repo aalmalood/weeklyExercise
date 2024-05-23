@@ -235,7 +235,6 @@ function loadLogs(profile) {
                         
                         </tr>
                     </thead>
-                    <tbody>
                 `;
                 
             for (let logKey in logs) {
@@ -267,7 +266,6 @@ function loadLogs(profile) {
             
                
                 div.innerHTML = div.innerHTML + `
-                        </tbody>
                     </table>
                 `;
                 logsList.appendChild(div);

@@ -223,6 +223,7 @@ function loadLogs(profile) {
             const div = document.createElement('table');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
                 <table class="table">
                     <thead>
                         <tr>

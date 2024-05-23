@@ -258,6 +258,8 @@ function loadLogs(profile) {
                 logsList.appendChild(div);
             }
         } else {
+            const logsList = document.getElementById("log-list");
+            logsList.innerHTML = '';
             console.log("No logs available for this profile");
         }
     }).catch((error) => {

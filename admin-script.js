@@ -220,16 +220,21 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
-            const div = document.createElement('div');
+            const div = document.createElement('table');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center">
-                        <label>date</label>
-                        <label>exercise</label>
-                        <label>current Count</label>
-                        <label>reduced</label>
-                        <label>new Count</label>
-                    </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">date</th>
+                            <th scope="col">exercise</th>
+                            <th scope="col">Old Count</th>
+                            <th scope="col">Entry Value</th>
+                            <th scope="col">New Count</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
                 `;
                 logsList.appendChild(div);
             for (let logKey in logs) {
@@ -244,19 +249,30 @@ function loadLogs(profile) {
                 const reduced = log.reduced ? log.reduced : '';
                 const newCount = log.newCount ? log.newCount : '';
 
-                const div = document.createElement('div');
+                const div = document.createElement('tr');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center">
-                        <label>${date}</label>
-                        <label>${exercise}</label>
-                        <label>${currentCount}</label>
-                        <label>${reduced}</label>
-                        <label>${newCount}</label>
-                    </div>
+                    
+                        <tr>
+                            <th scope="row">${date}</th>
+                            <th scope="row">${exercise}</th>
+                            <th scope="row">${currentCount}</th>
+                            <th scope="row">${currentCount}</th>
+                            <th scope="row">${reduced}</th>
+                            <th scope="row">${newCount}</th>
+                        
+                        </tr>
                 `;
                 logsList.appendChild(div);
             }
+            const div = document.createElement('tr');
+                div.classList.add('list-group-item');
+                div.innerHTML = `
+                        </tbody>
+                    </table>
+                `;
+                logsList.appendChild(div);
+
         } else {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';

@@ -224,11 +224,11 @@ function loadLogs(profile) {
                 
                 div.innerHTML = `
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">date</th>
-                            <th scope="col">exercise</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Exercise</th>
                             <th scope="col">Old Count</th>
                             <th scope="col">Entry Value</th>
                             <th scope="col">New Count</th>

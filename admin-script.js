@@ -221,10 +221,9 @@ function loadLogs(profile) {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
             const div = document.createElement('table');
-                
+            div.classList.add('table table-striped');    
                 div.innerHTML = `
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-                <table class="table table-striped">
+                <table>
                     <thead>
                         <tr>
                             <th scope="col">Date</th>

@@ -34,7 +34,8 @@ input[type="number"] {
 
 button {
     margin-left: 10px;
-    background-color: #e83e8c;;
+    background-color: #e83e8c;
+    border-color: #e83e8c;
 }
 
 span {

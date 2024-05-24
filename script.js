@@ -109,7 +109,7 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <img src="src/img/${imageName}.jpg" alt="" width=25% height=25%>
                     <label for="${exercise}">${exercise}</label>
-                    <label id="${exercise}"> Remaining: ${exercises[exercise]}</label>
+                    <label id="${exercise}Remaining"> Remaining: ${exercises[exercise]}</label>
                     <input type="number" id="${exercise}" class="form-control" value="0">
                     <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;
@@ -130,11 +130,13 @@ window.logExercise = function(profile, exercise) {
             const currentCount = snapshot.val();
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
+            console.log("myElement.value" , myElement.value);
             const updatedCount = parseInt(currentCount - parseInt(myElement.value)); // Reduce by the value entered
 
             const updateData = {};
             updateData[exercise] = updatedCount;
             console.log("updateData",updateData);
+            console.log("exercise , updatedCount" , exercise , updatedCount);
 
             update(ref(db, `profiles/${profile}/exercises/`), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);

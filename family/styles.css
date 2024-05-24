@@ -2,7 +2,7 @@ input[type="number"] {
     width: 50px;
 }
 
-button {
+.btn-primary {
     
     background-color: #e83e8c;
     border-color: #e83e8c;

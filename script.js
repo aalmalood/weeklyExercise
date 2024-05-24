@@ -130,7 +130,7 @@ window.logExercise = function(profile, exercise) {
             const currentCount = snapshot.val();
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
-            const updatedCount = currentCount - parseInt(myElement.value); // Reduce by the value entered
+            const updatedCount = parseInt(currentCount - parseInt(myElement.value)); // Reduce by the value entered
 
             const updateData = {};
             updateData[exercise] = updatedCount;

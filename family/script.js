@@ -107,7 +107,7 @@ function loadExerciseData() {
                 exerciseDiv.classList.add('form-group');
                 const imageName = exercise.replace(/\s/g, '');
                 exerciseDiv.innerHTML = `
-                    <img src="../src/img/${imageName}.png" alt="${exercise}" width=25% height=25%>
+                    <img src="../src/img/${imageName}.png" alt="" width=25% height=25%>
                     <label for="${exercise}">${exercise}</label>
                     <label id="${exercise}"> Remaining ${exercises[exercise]}</label>
                     <input type="text" id="${exercise}" class="form-control" value="0">

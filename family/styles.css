@@ -3,10 +3,6 @@ body {
     font-weight: bold;
 }
 
-input[type="number"] {
-    width: 50px;
-}
-
 .btn-primary {
     
     background-color: #e83e8c;

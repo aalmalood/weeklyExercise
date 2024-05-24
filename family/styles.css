@@ -1,3 +1,8 @@
+body {
+    display: flex;
+    font-weight: bold;
+}
+
 input[type="number"] {
     width: 50px;
 }

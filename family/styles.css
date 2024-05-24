@@ -8,4 +8,8 @@ input[type="number"] {
     border-color: #e83e8c;
 }
 
+.list-group-item.active{
+    background-color: #e83e8c;
+    border-color: #e83e8c;
+}
 

@@ -13,7 +13,12 @@ input[type="number"] {
     border-color: #e83e8c;
 }
 
-#profile-section {
+option {
+    color: #e83e8c;
+    border-color: #e83e8c;
+    font-weight: bold;
+}
+select{
     color: #e83e8c;
     border-color: #e83e8c;
     font-weight: bold;

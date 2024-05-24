@@ -105,9 +105,11 @@ function loadExerciseData() {
             for (let exercise in exercises) {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
+                const imageName = exercise.replace(/\s/g, '');
                 exerciseDiv.innerHTML = `
+                    <img src="../src/img/${imageName}.jpg" alt="" width=25% height=25%>
                     <label for="${exercise}">${exercise}</label>
-                    <label id="${exercise}Remaining">${exercises[exercise]}</label>
+                    <label id="${exercise}"> Remaining: ${exercises[exercise]}</label>
                     <input type="text" id="${exercise}" class="form-control" value="0">
                     <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
                 `;

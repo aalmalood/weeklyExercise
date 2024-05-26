@@ -220,10 +220,15 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
+
+            // Convert logs object to array and sort by date in descending order (newest to oldest)
+            const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
+            logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             const div = document.createElement('table');
-            div.classList.add('table');    
+            div.classList.add('table');
             div.classList.add('table-striped');
-                div.innerHTML = `
+            div.innerHTML = `
                 <table>
                     <thead>
                         <tr>
@@ -232,42 +237,34 @@ function loadLogs(profile) {
                             <th scope="col">Old Count</th>
                             <th scope="col">Entry Value</th>
                             <th scope="col">New Count</th>
-                        
                         </tr>
                     </thead>
-                `;
-                
-            for (let logKey in logs) {
-                const log = logs[logKey]; // Access each log object
-               console.log("log", log);
-               console.log("log..date", log.date);
-                // Check if properties exist, if not, assign an empty string
-                let date = log.date ? log.date : '';
-                date = new Date(log.date).toLocaleString();
+                    <tbody>
+            `;
+
+            for (let log of logsArray) {
+                const date = log.date ? new Date(log.date).toLocaleString() : '';
                 const exercise = log.exercise ? log.exercise : '';
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
                 const newCount = log.newCount ? log.newCount : '';
 
-               
-                div.innerHTML = div.innerHTML + `
-                    
-                        <tr>
-                            <th scope="row">${date}</th>
-                            <th scope="row">${exercise}</th>
-                            <th scope="row">${currentCount}</th>
-                            <th scope="row">${reduced}</th>
-                            <th scope="row">${newCount}</th>
-                        
-                        </tr>
+                div.innerHTML += `
+                    <tr>
+                        <th scope="row">${date}</th>
+                        <th scope="row">${exercise}</th>
+                        <th scope="row">${currentCount}</th>
+                        <th scope="row">${reduced}</th>
+                        <th scope="row">${newCount}</th>
+                    </tr>
                 `;
             }
-            
-               
-                div.innerHTML = div.innerHTML + `
-                    </table>
-                `;
-                logsList.appendChild(div);
+
+            div.innerHTML += `
+                    </tbody>
+                </table>
+            `;
+            logsList.appendChild(div);
         } else {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';

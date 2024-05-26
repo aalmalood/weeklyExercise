@@ -106,6 +106,13 @@ function loadExerciseData() {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 const imageName = exercise.replace(/\s/g, '');
+                var color = "red";
+                var ripsLabel = "Remaining:";
+                if(exercises[exercise] <= 0){
+                    color = "green";
+                    exercises[exercise] = exercises[exercise] *-1;
+                    ripsLabel = "Extra:" ;
+                }
                 exerciseDiv.innerHTML = `
                     <div class="row">
                         <div class="column">
@@ -114,7 +121,7 @@ function loadExerciseData() {
                         <div class="column">  
                             <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                             <br/>
-                            <label id="${exercise}Remaining" style=" font-size: 90%;"> Remaining: <span style="color:red;">${exercises[exercise]}<span></label>
+                            <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise]}<span></label>
                         </div>
                     </div>
                     <input type="number" id="${exercise}" class="form-control" value="0">

@@ -224,7 +224,7 @@ function loadLogs(profile) {
             // Convert logs object to array and sort by date in descending order (newest to oldest)
             const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
             logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+            
             const div = document.createElement('table');
             div.classList.add('table');
             div.classList.add('table-striped');
@@ -248,6 +248,7 @@ function loadLogs(profile) {
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
                 const newCount = log.newCount ? log.newCount : '';
+                
 
                 div.innerHTML += `
                     <tr>

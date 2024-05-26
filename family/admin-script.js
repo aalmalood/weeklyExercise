@@ -102,12 +102,21 @@ function addProfile() {
          exercises: {}
      }).then(() => {
          // Load existing exercises
+         const newExerciseRips = {
+            remaining: 0,
+            total: 0
+        };
          console.log("profileNamee in then" , profileName);
          const dbRef = ref(db, `familyExercises`);
          get(dbRef).then(snapshot => {
              const exercises = {};
+
              snapshot.forEach(exercise => {
-                 exercises[exercise.key] = 0; // Initialize with 0 reps
+                const newExerciseRips = {
+                    remaining: exercise.val(),
+                    total: exercise.val()
+                };
+                 exercises[exercise.key] = newExerciseRips; 
              });
              // Set the exercises for the new profile
              //loadProfiles();
@@ -145,14 +154,15 @@ function loadExercises(profile) {
         if (snapshot.exists()) {
             const exercises = snapshot.val();
             const exercisesList = document.getElementById("exercises-list");
-            exercisesList.innerHTML = '';
+            exercisesList.innerHTML = '<div width=90% class="d-flex justify-content-between align-items-left"><span>Exercise Name</span><span>Remaining</span><span>total</span><span>Action</span></div>';
             for (let exercise in exercises) {
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <span>${exercise}</span>
-                        <input type="number" value="${exercises[exercise]}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <input type="number" value="${exercises[exercise].remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <input type="number" value="${exercises[exercise].total}" class="form-control w-25 mr-2" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)">
                         <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
                     </div>
                 `;
@@ -182,8 +192,13 @@ function addExercise() {
         return;
     }
 
+    const newExerciseRips = {
+        remaining: totalReps,
+        total: totalReps
+    };
+
     const exerciseRef = ref(db, `familyProfiles/${activeProfile}/exercises/${exerciseName}`);
-    set(exerciseRef, totalReps).then(() => {
+    set(exerciseRef, newExerciseRips).then(() => {
         loadExercises(activeProfile);
         loadLogs(activeProfile);
         document.getElementById("new-exercise-name").value = '';
@@ -195,11 +210,20 @@ function addExercise() {
 
 // Function to update an exercise's total reps
 function updateExercise(profile, exercise, total) {
-    const exerciseRef = ref(db, `familyProfiles/${profile}/exercises/${exercise}`);
+    const exerciseRef = ref(db, `familyProfiles/${profile}/exercises/${exercise}/remaining`);
     set(exerciseRef, parseInt(total)).catch((error) => {
         console.error("Error updating exercise:", error);
     });
 }
+
+// Function to update an exercise's total reps
+function updateExerciseTotal(profile, exercise, total) {
+    const exerciseRef = ref(db, `familyProfiles/${profile}/exercises/${exercise}/total`);
+    set(exerciseRef, parseInt(total)).catch((error) => {
+        console.error("Error updating exercise:", error);
+    });
+}
+
 
 // Function to delete an exercise from a profile
 function deleteExercise(profile, exercise) {

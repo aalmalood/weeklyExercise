@@ -106,6 +106,16 @@ function loadExerciseData() {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 const imageName = exercise.replace(/\s/g, '');
+                /*console.log("exercises[exercise]" , exercises[exercise]);
+                console.log("exercises[remaining]" , exercises[exercise].remaining);
+                console.log("exercises[total]" , exercises[exercise].total);*/
+                var color = "red";
+                var ripsLabel = "Remaining:";
+                if(exercises[exercise].remaining <= 0){
+                    color = "green";
+                    exercises[exercise].remaining = exercises[exercise].remaining *-1;
+                    ripsLabel = "Extra:" ;
+                }
                 exerciseDiv.innerHTML = `
                 <div class="row">
                 <div class="column">
@@ -114,11 +124,13 @@ function loadExerciseData() {
                     <div class="column">  
                         <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                         <br/>
-                        <label id="${exercise}Remaining" style=" font-size: 90%;"> Remaining: <span style="color:red;">${exercises[exercise]}<span></label>
+                        <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining}</span>/${exercises[exercise].total}</label>
                     </div>
                 </div>
-                <input type="number" id="${exercise}" class="form-control" value="0">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary">Log</button>
+                <div class="row">
+                    <input type="number" id="${exercise}" class="form-control" value="0">
+                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary btn-block">Log</button>
+                </div>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -134,22 +146,26 @@ window.logExercise = function(profile, exercise) {
     const selectedProfileRef = ref(db, `familyProfiles/${profile}/exercises/${exercise}`);
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {
-            const currentCount = snapshot.val();
+            const currentData = snapshot.val();
+            const currentCount = currentData.remaining;
+            /*console.log("snapshot.val()", currentData);
+            console.log("currentCount", currentCount);*/
+
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
-            const updatedCount = currentCount - parseInt(myElement.value); // Reduce by the value entered
+            const updatedCount = currentCount - rips; // Reduce by the value entered
 
             const updateData = {};
-            updateData[exercise] = updatedCount;
-            console.log("updateData",updateData);
+            updateData[`familyProfiles/${profile}/exercises/${exercise}/remaining`] = updatedCount;
 
-            update(ref(db, `familyProfiles/${profile}/exercises/`), updateData).then(() => {
+            update(ref(db), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating
                 loadExerciseData();
             }).catch((error) => {
                 console.error("Error updating exercise count:", error);
             });
+
             const ddate = new Date().getTime();
             const logRef = ref(db, `familyProfiles/${profile}/logs/${ddate}`);
             set(logRef, {
@@ -160,13 +176,11 @@ window.logExercise = function(profile, exercise) {
                 newCount: updatedCount
             }).then(() => {
                 // Reload profiles and exercise data
-                //loadProfiles();
                 loadExerciseData();
-               // newProfileInput.value = '';
             }).catch(error => {
                 console.error("Error adding profile log:", error);
             });
-            
+
         } else {
             console.log("Exercise data not found");
         }

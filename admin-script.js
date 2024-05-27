@@ -306,13 +306,12 @@ function loadLogs(profile) {
                     </thead>
                 `;
                 
-            for (let logKey in logsArray) {
-                const log = logs[logKey]; // Access each log object
+            for (let log of logsArray) {
+                
               // console.log("log", log);
                //console.log("log..date", log.date);
                 // Check if properties exist, if not, assign an empty string
-                let date = log.date ? log.date : '';
-                date = new Date(log.date).toLocaleString();
+                const date = log.date ? new Date(log.date).toLocaleString() : '';
                 const exercise = log.exercise ? log.exercise : '';
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';

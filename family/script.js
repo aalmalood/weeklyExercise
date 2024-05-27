@@ -207,7 +207,6 @@ function updateExercise(day, value) {
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;
 window.loadExerciseData = loadExerciseData;
-window.resetExercises = resetExercises;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

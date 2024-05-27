@@ -312,9 +312,11 @@ function loadLogs(profile) {
                 const reduced = log.reduced ? log.reduced : '';
                 var newCount = log.newCount ? log.newCount : '';
                 var isExtra = '';
+                var color = 'red';
                 if(newCount < 0){
                     newCount = newCount * -1;
-                    isExtra = 'Extra: '
+                    isExtra = 'Extra: ';
+                    color = 'green';
                 }
                
                 div.innerHTML = div.innerHTML + `
@@ -324,7 +326,7 @@ function loadLogs(profile) {
                             <th scope="row">${exercise}</th>
                             <th scope="row">${currentCount}</th>
                             <th scope="row">${reduced}</th>
-                            <th scope="row"><span style="color:green;">${isExtra}</span>${newCount}</th>
+                            <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
                         
                         </tr>
                 `;

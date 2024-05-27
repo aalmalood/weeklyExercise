@@ -222,6 +222,7 @@ function updateExercise(profile, exercise, total) {
 // Function to update an exercise's total reps
 function updateExerciseTotal(profile, exercise, total) {
     const exerciseRef = ref(db, `familyProfiles/${profile}/exercises/${exercise}/total`);
+    console.log("profile, exercise, total" , profile, exercise, total);
     set(exerciseRef, parseInt(total)).catch((error) => {
         console.error("Error updating exercise:", error);
     });

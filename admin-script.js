@@ -247,7 +247,12 @@ function loadLogs(profile) {
                 const exercise = log.exercise ? log.exercise : '';
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
-                const newCount = log.newCount ? log.newCount : '';
+                var newCount = log.newCount ? log.newCount : '';
+                var isExtra = '';
+                if(newCount < 0){
+                    newCount = newCount * -1;
+                    isExtra = 'Extra: '
+                }
                 
 
                 div.innerHTML += `
@@ -256,7 +261,7 @@ function loadLogs(profile) {
                         <th scope="row">${exercise}</th>
                         <th scope="row">${currentCount}</th>
                         <th scope="row">${reduced}</th>
-                        <th scope="row">${newCount}</th>
+                        <th scope="row"><span>${isExtra}<span>${newCount}</th>
                     </tr>
                 `;
             }

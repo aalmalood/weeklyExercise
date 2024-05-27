@@ -265,7 +265,7 @@ function resetExercises(profile) {
          set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
     }).then(() => {
         // Reload profiles and exercise data
-        loadProfiles();
+        loadExercises();
         document.getElementById("new-profile-name").value = '';
     }).catch(error => {
         console.error("Error adding profile:", error);

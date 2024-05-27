@@ -240,33 +240,36 @@ function deleteExercise(profile, exercise) {
 
 function resetExercises(profile) {
     const dbRef = ref(db, `familyProfiles/${profile}/exercises/`);
-         get(dbRef).then(snapshot => {
-             const exercises = {};
-             console.log("snapshot",snapshot.val());
-             snapshot.forEach(exercise => {
-                console.log("exercise",exercise);
-                const newExerciseRips = {
+    get(dbRef).then(snapshot => {
+        const exercises = {};
+        
+        snapshot.forEach(exerciseSnapshot => {
+            const exercise = exerciseSnapshot.val();
+            const exerciseKey = exerciseSnapshot.key;
+            
+            console.log("exercise", exercise);
+            
+            if (exercise.total === undefined) {
+                console.error(`Exercise ${exerciseKey} has undefined total value`);
+            } else {
+                const newExerciseReps = {
                     remaining: exercise.total,
                     total: exercise.total
                 };
-                 exercises[exercise.key] = newExerciseRips; 
-             });
-             // Set the exercises for the new profile
-             //loadProfiles();
-             set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
-             
-             
-             
-         }).then(() => {
-            
-            //console.log("profileNamee in then then " , profileName);
-             // Reload profiles and exercise data
-             loadProfiles();
-             //loadExerciseData();
-             document.getElementById("new-profile-name").value = '';
-         }).catch(error => {
-             console.error("Error adding profile:", error);
-         });
+                exercises[exerciseKey] = newExerciseReps;
+            }
+        });
+        
+        console.log("exercises", exercises);
+        // Set the exercises for the new profile
+         set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
+    }).then(() => {
+        // Reload profiles and exercise data
+        loadProfiles();
+        document.getElementById("new-profile-name").value = '';
+    }).catch(error => {
+        console.error("Error adding profile:", error);
+    });
 }
 
 // Function to load exercises for a selected profile

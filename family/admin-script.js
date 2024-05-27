@@ -102,10 +102,7 @@ function addProfile() {
          exercises: {}
      }).then(() => {
          // Load existing exercises
-         const newExerciseRips = {
-            remaining: 0,
-            total: 0
-        };
+        
          console.log("profileNamee in then" , profileName);
          const dbRef = ref(db, `familyExercises`);
          get(dbRef).then(snapshot => {
@@ -168,6 +165,11 @@ function loadExercises(profile) {
                 `;
                 exercisesList.appendChild(div);
             }
+            exercisesList.innerHTML = exercisesList.innerHTML +  `
+            <div class="d-flex justify-content-between align-items-center">
+                <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-sm">Reset</button>
+            </div>
+        `;
             loadLogs(activeProfile);
         } else {
             console.log("No exercises available for this profile");
@@ -235,6 +237,37 @@ function deleteExercise(profile, exercise) {
         console.error("Error deleting exercise:", error);
     });
 }
+
+function resetExercises(profile) {
+    const dbRef = ref(db, `familyProfiles/${profile}/exercises/`);
+         get(dbRef).then(snapshot => {
+             const exercises = {};
+
+             snapshot.forEach(exercise => {
+                const newExerciseRips = {
+                    remaining: exercise.total,
+                    total: exercise.total
+                };
+                 exercises[exercise.key] = newExerciseRips; 
+             });
+             // Set the exercises for the new profile
+             //loadProfiles();
+             set(ref(db, `familyProfiles/${profileName}/exercises`), exercises);
+             
+             
+             
+         }).then(() => {
+            
+            //console.log("profileNamee in then then " , profileName);
+             // Reload profiles and exercise data
+             loadProfiles();
+             //loadExerciseData();
+             document.getElementById("new-profile-name").value = '';
+         }).catch(error => {
+             console.error("Error adding profile:", error);
+         });
+}
+
 // Function to load exercises for a selected profile
 function loadLogs(profile) {
     const dbRef = ref(db, `familyProfiles/${profile}/logs`);

@@ -171,6 +171,7 @@ window.logExercise = function(profile, exercise) {
             set(logRef, {
                 date: ddate,
                 exercise: exercise,
+                total: currentData.total,
                 currentCount: currentCount,
                 reduced: rips,
                 newCount: updatedCount
@@ -201,27 +202,7 @@ function updateExercise(day, value) {
     });
 }
 
-// Function to reset exercises
-function resetExercises() {
-    const selectedProfile = profileSelect.value;
-    if (!selectedProfile) return;
 
-    const resetData = {
-        Monday: '',
-        Tuesday: '',
-        Wednesday: '',
-        Thursday: '',
-        Friday: '',
-        Saturday: '',
-        Sunday: ''
-    };
-    
-    set(ref(db, `familyProfiles/${selectedProfile}/exercises`), resetData).then(() => {
-        loadExerciseData();
-    }).catch((error) => {
-        console.error(error);
-    });
-}
 
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;

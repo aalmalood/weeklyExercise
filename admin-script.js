@@ -107,7 +107,11 @@ function addProfile() {
          get(dbRef).then(snapshot => {
              const exercises = {};
              snapshot.forEach(exercise => {
-                 exercises[exercise.key] = 0; // Initialize with 0 reps
+                const newExerciseRips = {
+                    remaining: exercise.val(),
+                    total: exercise.val()
+                };
+                 exercises[exercise.key] = newExerciseRips; 
              });
              // Set the exercises for the new profile
              //loadProfiles();
@@ -145,19 +149,26 @@ function loadExercises(profile) {
         if (snapshot.exists()) {
             const exercises = snapshot.val();
             const exercisesList = document.getElementById("exercises-list");
-            exercisesList.innerHTML = '';
+            exercisesList.innerHTML = '<div width=90% class="d-flex justify-content-between align-items-left"><span>Exercise Name</span><span>Remaining</span><span>total</span><span>Action</span></div>';
+
             for (let exercise in exercises) {
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <span>${exercise}</span>
-                        <input type="number" value="${exercises[exercise]}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <input type="number" value="${exercises[exercise].remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <input type="number" value="${exercises[exercise].total}" class="form-control w-25 mr-2" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)">
                         <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
                     </div>
                 `;
                 exercisesList.appendChild(div);
             }
+            exercisesList.innerHTML = exercisesList.innerHTML +  `
+            <div class="d-flex justify-content-between align-items-center">
+                <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-block">Reset</button>
+            </div>
+        `;
             loadLogs(activeProfile);
         } else {
             console.log("No exercises available for this profile");
@@ -181,9 +192,12 @@ function addExercise() {
         alert("Please enter a valid exercise name and total reps");
         return;
     }
-
+    const newExerciseRips = {
+        remaining: totalReps,
+        total: totalReps
+    };
     const exerciseRef = ref(db, `profiles/${activeProfile}/exercises/${exerciseName}`);
-    set(exerciseRef, totalReps).then(() => {
+    set(exerciseRef, newExerciseRips).then(() => {
         loadExercises(activeProfile);
         loadLogs(activeProfile);
         document.getElementById("new-exercise-name").value = '';
@@ -194,12 +208,27 @@ function addExercise() {
 }
 
 // Function to update an exercise's total reps
+
+// Function to update an exercise's total reps
 function updateExercise(profile, exercise, total) {
-    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}/remaining`);
     set(exerciseRef, parseInt(total)).catch((error) => {
         console.error("Error updating exercise:", error);
     });
+    loadExercises(profile);
 }
+
+// Function to update an exercise's total reps
+function updateExerciseTotal(profile, exercise, total) {
+    const exerciseRef = ref(db, `profiles/${profile}/exercises/${exercise}/total`);
+    console.log("profile, exercise, total" , profile, exercise, total);
+    set(exerciseRef, parseInt(total)).catch((error) => {
+        console.error("Error updating exercise:", error);
+    });
+    loadExercises(profile);
+}
+
+
 
 // Function to delete an exercise from a profile
 function deleteExercise(profile, exercise) {
@@ -211,6 +240,42 @@ function deleteExercise(profile, exercise) {
         console.error("Error deleting exercise:", error);
     });
 }
+
+function resetExercises(profile) {
+    const dbRef = ref(db, `profiles/${profile}/exercises/`);
+    get(dbRef).then(snapshot => {
+        const exercises = {};
+        
+        snapshot.forEach(exerciseSnapshot => {
+            const exercise = exerciseSnapshot.val();
+            const exerciseKey = exerciseSnapshot.key;
+            
+            console.log("exercise", exercise);
+            
+            if (exercise.total === undefined) {
+                console.error(`Exercise ${exerciseKey} has undefined total value`);
+            } else {
+                const newExerciseReps = {
+                    remaining: exercise.total,
+                    total: exercise.total
+                };
+                exercises[exerciseKey] = newExerciseReps;
+            }
+        });
+        
+        console.log("exercises", exercises);
+        // Set the exercises for the new profile
+         set(ref(db, `profiles/${profile}/exercises`), exercises);
+         loadExercises(profile);
+    }).then(() => {
+        // Reload profiles and exercise data
+        loadExercises(profile);
+        document.getElementById("new-profile-name").value = '';
+    }).catch(error => {
+        console.error("Error adding profile:", error);
+    });
+}
+
 // Function to load exercises for a selected profile
 function loadLogs(profile) {
     const dbRef = ref(db, `profiles/${profile}/logs`);
@@ -220,15 +285,11 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
-
-            // Convert logs object to array and sort by date in descending order (newest to oldest)
-            const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
-            logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
             const div = document.createElement('table');
-            div.classList.add('table');
+            div.classList.add('table');    
             div.classList.add('table-striped');
-            div.innerHTML = `
+            
+                div.innerHTML = `
                 <table>
                     <thead>
                         <tr>
@@ -237,13 +298,18 @@ function loadLogs(profile) {
                             <th scope="col">Old Count</th>
                             <th scope="col">Done</th>
                             <th scope="col">Remaining</th>
+                        
                         </tr>
                     </thead>
-                    <tbody>
-            `;
-
-            for (let log of logsArray) {
-                const date = log.date ? new Date(log.date).toLocaleString() : '';
+                `;
+                
+            for (let logKey in logs) {
+                const log = logs[logKey]; // Access each log object
+               console.log("log", log);
+               console.log("log..date", log.date);
+                // Check if properties exist, if not, assign an empty string
+                let date = log.date ? log.date : '';
+                date = new Date(log.date).toLocaleString();
                 const exercise = log.exercise ? log.exercise : '';
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
@@ -255,24 +321,25 @@ function loadLogs(profile) {
                     isExtra = 'Extra: ';
                     color = 'green';
                 }
-                
-
-                div.innerHTML += `
-                    <tr>
-                        <th scope="row">${date}</th>
-                        <th scope="row">${exercise}</th>
-                        <th scope="row">${currentCount}</th>
-                        <th scope="row">${reduced}</th>
-                        <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
-                    </tr>
+               
+                div.innerHTML = div.innerHTML + `
+                    
+                        <tr>
+                            <th scope="row">${date}</th>
+                            <th scope="row">${exercise}</th>
+                            <th scope="row">${currentCount}</th>
+                            <th scope="row">${reduced}</th>
+                            <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
+                        
+                        </tr>
                 `;
             }
-
-            div.innerHTML += `
-                    </tbody>
-                </table>
-            `;
-            logsList.appendChild(div);
+            
+               
+                div.innerHTML = div.innerHTML + `
+                    </table>
+                `;
+                logsList.appendChild(div);
         } else {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
@@ -284,6 +351,7 @@ function loadLogs(profile) {
 }
 
 
+
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;
 window.deleteProfile = deleteProfile;
@@ -292,7 +360,9 @@ window.loadExercises = loadExercises;
 window.loadLogs = loadLogs;
 window.addExercise = addExercise;
 window.updateExercise = updateExercise;
+window.updateExerciseTotal = updateExerciseTotal;
 window.deleteExercise = deleteExercise;
+window.resetExercises = resetExercises;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

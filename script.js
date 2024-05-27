@@ -108,9 +108,9 @@ function loadExerciseData() {
                 const imageName = exercise.replace(/\s/g, '');
                 var color = "red";
                 var ripsLabel = "Remaining:";
-                if(exercises[exercise] <= 0){
+                if(exercises[exercise].remaining <= 0){
                     color = "green";
-                    exercises[exercise] = exercises[exercise] *-1;
+                    exercises[exercise].remaining = exercises[exercise].remaining *-1;
                     ripsLabel = "Extra:" ;
                 }
                 exerciseDiv.innerHTML = `
@@ -119,13 +119,17 @@ function loadExerciseData() {
                             <img src="src/img/${imageName}.jpg" alt="" width=50% height=50%>
                         </div>
                         <div class="column">  
-                            <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
-                            <br/>
-                            <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise]}<span></label>
+                                <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
+                                <br/>
+                                <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining}</span>/${exercises[exercise].total}</label>
+                            </div>
                         </div>
-                    </div>
-                    <input type="number" id="${exercise}" class="form-control" value="0">
-                    <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-dark">Log</button>
+                        <div class="row">
+                            <input type="number" id="${exercise}" class="form-control" value="0">
+                            <input type="number" id="${exercise}" class="form-control" value="0">
+                            <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-dark">Log</button>
+                            <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary btn-block">Log</button>
+                        </div>
                 `;
                 exerciseSection.appendChild(exerciseDiv);
             }
@@ -141,41 +145,42 @@ window.logExercise = function(profile, exercise) {
     const selectedProfileRef = ref(db, `profiles/${profile}/exercises/${exercise}`);
     get(selectedProfileRef).then((snapshot) => {
         if (snapshot.exists()) {
-            const currentCount = snapshot.val();
+            const currentData = snapshot.val();
+            const currentCount = currentData.remaining;
+            /*console.log("snapshot.val()", currentData);
+            console.log("currentCount", currentCount);*/
+
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
-            console.log("myElement.value" , myElement.value);
-            const updatedCount = parseInt(currentCount - parseInt(myElement.value)); // Reduce by the value entered
+            const updatedCount = currentCount - rips; // Reduce by the value entered
 
             const updateData = {};
-            updateData[exercise] = updatedCount;
-            console.log("updateData",updateData);
-            console.log("exercise , updatedCount" , exercise , updatedCount);
+            updateData[`profiles/${profile}/exercises/${exercise}/remaining`] = updatedCount;
 
-            update(ref(db, `profiles/${profile}/exercises/`), updateData).then(() => {
+            update(ref(db), updateData).then(() => {
                 console.log(`Exercise ${exercise} logged for profile ${profile}`);
                 // Reload exercise data after updating
                 loadExerciseData();
             }).catch((error) => {
                 console.error("Error updating exercise count:", error);
             });
+
             const ddate = new Date().getTime();
             const logRef = ref(db, `profiles/${profile}/logs/${ddate}`);
             set(logRef, {
                 date: ddate,
                 exercise: exercise,
+                total: currentData.total,
                 currentCount: currentCount,
                 reduced: rips,
                 newCount: updatedCount
             }).then(() => {
                 // Reload profiles and exercise data
-                //loadProfiles();
                 loadExerciseData();
-               // newProfileInput.value = '';
             }).catch(error => {
                 console.error("Error adding profile log:", error);
             });
-            
+
         } else {
             console.log("Exercise data not found");
         }
@@ -183,6 +188,8 @@ window.logExercise = function(profile, exercise) {
         console.error(error);
     });
 }
+
+
 
 // Function to update exercise data
 function updateExercise(day, value) {
@@ -196,32 +203,10 @@ function updateExercise(day, value) {
     });
 }
 
-// Function to reset exercises
-function resetExercises() {
-    const selectedProfile = profileSelect.value;
-    if (!selectedProfile) return;
-
-    const resetData = {
-        Monday: '',
-        Tuesday: '',
-        Wednesday: '',
-        Thursday: '',
-        Friday: '',
-        Saturday: '',
-        Sunday: ''
-    };
-    
-    set(ref(db, `profiles/${selectedProfile}/exercises`), resetData).then(() => {
-        loadExerciseData();
-    }).catch((error) => {
-        console.error(error);
-    });
-}
 
 // Attach functions to the window object to make them globally accessible
 window.addProfile = addProfile;
 window.loadExerciseData = loadExerciseData;
-window.resetExercises = resetExercises;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

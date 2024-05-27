@@ -263,6 +263,7 @@ function resetExercises(profile) {
         console.log("exercises", exercises);
         // Set the exercises for the new profile
          set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
+         loadExercises(profile);
     }).then(() => {
         // Reload profiles and exercise data
         loadExercises(profile);

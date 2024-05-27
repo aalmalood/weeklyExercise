@@ -1,0 +1,81 @@
+function logExerciseData(profile, exerciseKey, exercise) {
+    const logRef = ref(db, `logs/${profile}`);
+    const logEntry = {
+        exerciseName: exerciseKey,
+        remaining: exercise.remaining,
+        total: exercise.total,
+        timestamp: new Date().toISOString()
+    };
+
+    push(logRef, logEntry).then(() => {
+        console.log(`Log entry created for ${profile}:`, logEntry);
+    }).catch(error => {
+        console.error("Error creating log entry:", error);
+    });
+}
+
+function resetExercises(profile) {
+    const dbRef = ref(db, `familyProfiles/${profile}/exercises/`);
+    get(dbRef).then(snapshot => {
+        const exercises = {};
+        console.log("snapshot", snapshot.val());
+        
+        snapshot.forEach(exerciseSnapshot => {
+            const exercise = exerciseSnapshot.val();
+            const exerciseKey = exerciseSnapshot.key;
+            
+            console.log("exercise", exercise);
+            
+            // Log the current exercise data
+            logExerciseData(profile, exerciseKey, exercise);
+            
+            if (exercise.total === undefined) {
+                console.error(`Exercise ${exerciseKey} has undefined total value`);
+            } else {
+                const newExerciseReps = {
+                    remaining: exercise.total,
+                    total: exercise.total
+                };
+                exercises[exerciseKey] = newExerciseReps;
+            }
+        });
+        
+        console.log("exercises", exercises);
+        // Set the exercises for the new profile
+        return set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
+    }).then(() => {
+        console.log(`Exercises reset for profile: ${profile}`);
+    }).catch(error => {
+        console.error("Error resetting exercises:", error);
+    });
+}
+
+function resetAllProfiles() {
+    const profiles = ['Alhareth', 'Dalal', 'Khadija'];
+    
+    profiles.forEach(profile => {
+        resetExercises(profile);
+    });
+}
+
+function checkAndResetExercises() {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 is Sunday
+
+    if (dayOfWeek === 0) {
+        const today = now.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+        if (lastResetDate !== today) {
+            resetAllProfiles();
+            lastResetDate = today;
+            console.log("Exercises have been reset on Sunday, " + today);
+        } else {
+            console.log("Exercises have already been reset today.");
+        }
+    }
+}
+
+// Check once when the script is loaded
+checkAndResetExercises();
+
+// Set interval to check every hour (or any interval you prefer)
+setInterval(checkAndResetExercises, 60 * 60 * 1000); // Check every hour

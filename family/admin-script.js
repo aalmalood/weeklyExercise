@@ -359,9 +359,10 @@ window.loadExercises = loadExercises;
 window.loadLogs = loadLogs;
 window.addExercise = addExercise;
 window.updateExercise = updateExercise;
+window.updateExerciseTotal = updateExerciseTotal;
 window.deleteExercise = deleteExercise;
 window.resetExercises = resetExercises;
-window.updateExerciseTotal = updateExerciseTotal;
+
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

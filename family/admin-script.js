@@ -216,6 +216,7 @@ function updateExercise(profile, exercise, total) {
     set(exerciseRef, parseInt(total)).catch((error) => {
         console.error("Error updating exercise:", error);
     });
+    loadExercises(profile);
 }
 
 // Function to update an exercise's total reps
@@ -224,6 +225,7 @@ function updateExerciseTotal(profile, exercise, total) {
     set(exerciseRef, parseInt(total)).catch((error) => {
         console.error("Error updating exercise:", error);
     });
+    loadExercises(profile);
 }
 
 
@@ -358,6 +360,7 @@ window.addExercise = addExercise;
 window.updateExercise = updateExercise;
 window.deleteExercise = deleteExercise;
 window.resetExercises = resetExercises;
+window.updateExerciseTotal = updateExerciseTotal;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

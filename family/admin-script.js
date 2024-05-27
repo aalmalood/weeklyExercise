@@ -242,8 +242,9 @@ function resetExercises(profile) {
     const dbRef = ref(db, `familyProfiles/${profile}/exercises/`);
          get(dbRef).then(snapshot => {
              const exercises = {};
-
+             console.log("snapshot",snapshot.val());
              snapshot.forEach(exercise => {
+                console.log("exercise",exercise);
                 const newExerciseRips = {
                     remaining: exercise.total,
                     total: exercise.total

@@ -286,8 +286,8 @@ function loadLogs(profile) {
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
              // Convert logs object to array and sort by date in descending order (newest to oldest)
-             const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
-             logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
+            logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
             const div = document.createElement('table');
             div.classList.add('table');    
             div.classList.add('table-striped');
@@ -306,7 +306,7 @@ function loadLogs(profile) {
                     </thead>
                 `;
                 
-            for (let logKey in logs) {
+            for (let logKey in logsArray) {
                 const log = logs[logKey]; // Access each log object
                console.log("log", log);
                console.log("log..date", log.date);

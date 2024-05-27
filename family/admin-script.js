@@ -252,7 +252,7 @@ function resetExercises(profile) {
              });
              // Set the exercises for the new profile
              //loadProfiles();
-             set(ref(db, `familyProfiles/${profileName}/exercises`), exercises);
+             set(ref(db, `familyProfiles/${profile}/exercises`), exercises);
              
              
              

@@ -308,8 +308,8 @@ function loadLogs(profile) {
                 
             for (let logKey in logsArray) {
                 const log = logs[logKey]; // Access each log object
-               console.log("log", log);
-               console.log("log..date", log.date);
+              // console.log("log", log);
+               //console.log("log..date", log.date);
                 // Check if properties exist, if not, assign an empty string
                 let date = log.date ? log.date : '';
                 date = new Date(log.date).toLocaleString();

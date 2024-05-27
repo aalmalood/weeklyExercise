@@ -235,8 +235,8 @@ function loadLogs(profile) {
                             <th scope="col">Date</th>
                             <th scope="col">Exercise</th>
                             <th scope="col">Old Count</th>
-                            <th scope="col">Entry Value</th>
-                            <th scope="col">New Count</th>
+                            <th scope="col">Done</th>
+                            <th scope="col">Remaining</th>
                         </tr>
                     </thead>
                     <tbody>

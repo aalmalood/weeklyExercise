@@ -167,7 +167,7 @@ function loadExercises(profile) {
             }
             exercisesList.innerHTML = exercisesList.innerHTML +  `
             <div class="d-flex justify-content-between align-items-center">
-                <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-sm">Reset</button>
+                <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-block">Reset</button>
             </div>
         `;
             loadLogs(activeProfile);

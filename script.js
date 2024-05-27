@@ -126,9 +126,7 @@ function loadExerciseData() {
                         </div>
                         <div class="row">
                             <input type="number" id="${exercise}" class="form-control" value="0">
-                            <input type="number" id="${exercise}" class="form-control" value="0">
-                            <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-dark">Log</button>
-                            <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-primary btn-block">Log</button>
+                            <button onclick="logExercise('${selectedProfile}', '${exercise}')" class="btn btn-dark btn-block">Log</button>
                         </div>
                 `;
                 exerciseSection.appendChild(exerciseDiv);

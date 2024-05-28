@@ -116,6 +116,10 @@ function loadExerciseData() {
                     exercises[exercise].remaining = exercises[exercise].remaining *-1;
                     ripsLabel = "Extra:" ;
                 }
+                var remaining = exercises[exercise].remaining;
+                if(exercise == "running"){
+                    remaining = remaining.toFixed(2);
+                }
                 exerciseDiv.innerHTML = `
                 <div class="row">
                 <div class="column">
@@ -124,7 +128,7 @@ function loadExerciseData() {
                     <div class="column">  
                         <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                         <br/>
-                        <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining.toFixed(2)}</span>/${exercises[exercise].total}</label>
+                        <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining}</span>/${exercises[exercise].total}</label>
                     </div>
                 </div>
                 <div class="row">

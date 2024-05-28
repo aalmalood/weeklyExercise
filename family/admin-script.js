@@ -155,10 +155,14 @@ function loadExercises(profile) {
             for (let exercise in exercises) {
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
+                var remaining = exercises[exercise].remaining;
+                if(exercise == "running"){
+                    remaining = remaining.toFixed(2);
+                }
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <span>${exercise}</span>
-                        <input type="number" value="${exercises[exercise].remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
+                        <input type="number" value="${remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
                         <input type="number" value="${exercises[exercise].total}" class="form-control w-25 mr-2" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)">
                         <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
                     </div>

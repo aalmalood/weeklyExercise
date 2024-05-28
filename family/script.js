@@ -158,7 +158,9 @@ window.logExercise = function(profile, exercise) {
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
             const updatedCount = currentCount - rips; // Reduce by the value entered
-
+            if(exercise == "running"){
+                updatedCount = updatedCount.toFixed(2);
+            }
             const updateData = {};
             updateData[`familyProfiles/${profile}/exercises/${exercise}/remaining`] = updatedCount;
 

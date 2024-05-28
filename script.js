@@ -111,7 +111,6 @@ function loadExerciseData() {
                 var remaining = exercises[exercise].remaining;
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);
-                    reduced = reduced.toFixed(2);
                 }
                 if(exercises[exercise].remaining <= 0){
                     color = "green";

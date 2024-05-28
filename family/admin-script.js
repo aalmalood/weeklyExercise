@@ -320,6 +320,7 @@ function loadLogs(profile) {
                 var newCount = log.newCount ? log.newCount : '';
                 if(exercise == "running"){
                     newCount = newCount.toFixed(2);
+                    reduced =  reduced.toFixed(2);
                 }
                 var isExtra = '';
                 var color = 'red';

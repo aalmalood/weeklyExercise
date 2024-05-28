@@ -108,6 +108,11 @@ function loadExerciseData() {
                 const imageName = exercise.replace(/\s/g, '');
                 var color = "red";
                 var ripsLabel = "Remaining:";
+                var remaining = exercises[exercise].remaining;
+                if(exercise == "running"){
+                    remaining = remaining.toFixed(2);
+                    reduced = reduced.toFixed(2);
+                }
                 if(exercises[exercise].remaining <= 0){
                     color = "green";
                     exercises[exercise].remaining = exercises[exercise].remaining *-1;
@@ -121,7 +126,7 @@ function loadExerciseData() {
                         <div class="column">  
                                 <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                                 <br/>
-                                <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining}</span>/${exercises[exercise].total}</label>
+                                <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${remaining}</span>/${exercises[exercise].total}</label>
                             </div>
                         </div>
                         <div class="row">
@@ -151,7 +156,9 @@ window.logExercise = function(profile, exercise) {
             const myElement = document.getElementById(exercise);
             const rips = parseInt(myElement.value);
             const updatedCount = currentCount - rips; // Reduce by the value entered
-
+            if(exercise == "running"){
+                updatedCount = updatedCount.toFixed(2);
+            }
             const updateData = {};
             updateData[`profiles/${profile}/exercises/${exercise}/remaining`] = updatedCount;
 

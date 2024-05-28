@@ -128,7 +128,7 @@ function loadExerciseData() {
                     <div class="column">  
                         <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                         <br/>
-                        <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${exercises[exercise].remaining}</span>/${exercises[exercise].total}</label>
+                        <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${remaining}</span>/${exercises[exercise].total}</label>
                     </div>
                 </div>
                 <div class="row">

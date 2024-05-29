@@ -108,9 +108,11 @@ function loadExerciseData() {
                 const imageName = exercise.replace(/\s/g, '');
                 var color = "red";
                 var ripsLabel = "Remaining:";
+                var descr = "";
                 var remaining = exercises[exercise].remaining;
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);
+                    descr = "Km";
                 }
                 if(exercises[exercise].remaining <= 0){
                     color = "green";
@@ -125,7 +127,7 @@ function loadExerciseData() {
                         <div class="column">  
                                 <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  
                                 <br/>
-                                <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${remaining}</span>/${exercises[exercise].total}</label>
+                                <label id="${exercise}Remaining" style=" font-size: 90%;"> ${ripsLabel} <span style="color:${color};">${remaining}</span>/${exercises[exercise].total}  ${descr}</label>
                             </div>
                         </div>
                         <div class="row">

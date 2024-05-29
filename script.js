@@ -109,6 +109,7 @@ function loadExerciseData() {
                 var color = "red";
                 var ripsLabel = "Remaining:";
                 var descr = "";
+                loadLogs(selectedProfile);
                 var remaining = exercises[exercise].remaining;
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);
@@ -203,6 +204,92 @@ function updateExercise(day, value) {
 
     update(ref(db, `profiles/${selectedProfile}/exercises`), {
         [day]: value
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+
+// Function to load exercises for a selected profile
+function loadLogs(profile) {
+    const dbRef = ref(db, `profiles/${profile}/logs`);
+    //setActiveProfile(profile);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const logs = snapshot.val();
+            const logsList = document.getElementById("log-list");
+            logsList.innerHTML = '';
+             // Convert logs object to array and sort by date in descending order (newest to oldest)
+            const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
+            logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const div = document.createElement('table');
+            div.classList.add('table');    
+            div.classList.add('table-striped');
+            
+                div.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Exercise</th>
+                            <th scope="col">Old Count</th>
+                            <th scope="col">Done</th>
+                            <th scope="col">Remaining</th>
+                        
+                        </tr>
+                    </thead>
+                `;
+                
+            for (let log of logsArray) {
+                
+              // console.log("log", log);
+               //console.log("log..date", log.date);
+                // Check if properties exist, if not, assign an empty string
+                const date = log.date ? new Date(log.date).toLocaleString() : '';
+                const exercise = log.exercise ? log.exercise : '';
+                const currentCount = log.currentCount ? log.currentCount : '';
+                const reduced = log.reduced ? log.reduced : '';
+                var newCount = log.newCount ? log.newCount : '';
+                var descr = "";
+                if(exercise == "running"){
+                    newCount = newCount.toFixed(2);
+                    descr = "(Km)";
+                }   
+                if(exercise == "jump jack"){
+                    descr = " (Minutes)";
+                }
+
+                var isExtra = '';
+                var color = 'red';
+                if(newCount < 0){
+                    newCount = newCount * -1;
+                    isExtra = 'Extra: ';
+                    color = 'green';
+                }
+               
+                div.innerHTML = div.innerHTML + `
+                    
+                        <tr>
+                            <th scope="row">${date}</th>
+                            <th scope="row">${exercise} ${descr}</th>
+                            <th scope="row">${currentCount}</th>
+                            <th scope="row">${reduced}</th>
+                            <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
+                        
+                        </tr>
+                `;
+            }
+            
+               
+                div.innerHTML = div.innerHTML + `
+                    </table>
+                `;
+                logsList.appendChild(div);
+        } else {
+            const logsList = document.getElementById("log-list");
+            logsList.innerHTML = '';
+            console.log("No logs available for this profile");
+        }
     }).catch((error) => {
         console.error(error);
     });

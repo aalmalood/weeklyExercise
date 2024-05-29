@@ -3,17 +3,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, set, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+import { environment } from './../src/env.js';
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCVG033ZZhIjMky7Zb2PqsdJb02ay5Fme4",
-    authDomain: "excersicetracker.firebaseapp.com",
-    databaseURL: "https://excersicetracker-default-rtdb.firebaseio.com",
-    projectId: "excersicetracker",
-    storageBucket: "excersicetracker.appspot.com",
-    messagingSenderId: "973586629666",
-    appId: "1:973586629666:web:15f6e3e0b1d43ac040f67b",
-    measurementId: "G-L3M00731C1"
+    apiKey: environment.apiKey,
+    authDomain: environment.authDomain,
+    databaseURL: environment.databaseURL,
+    projectId: environment.projectId,
+    storageBucket: environment.storageBucket,
+    messagingSenderId: environment.messagingSenderId,
+    appId: environment.appId,
+    measurementId: environment.measurementId
 };
 
 // Initialize Firebase

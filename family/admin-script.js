@@ -156,12 +156,17 @@ function loadExercises(profile) {
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 var remaining = exercises[exercise].remaining;
+                var descr = "";
+               if(exercise == "jump jack"){
+                    descr = " (Minutes)";
+                }
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);
+                    descr = "(Km)";
                 }
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>${exercise}</span>
+                        <span>${exercise}${descr}</span>
                         <input type="number" value="${remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
                         <input type="number" value="${exercises[exercise].total}" class="form-control w-25 mr-2" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)">
                         <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
@@ -318,9 +323,14 @@ function loadLogs(profile) {
                 const currentCount = log.currentCount ? log.currentCount : '';
                 const reduced = log.reduced ? log.reduced : '';
                 var newCount = log.newCount ? log.newCount : '';
+                var descr = "";
                 if(exercise == "running"){
                     newCount = newCount.toFixed(2);
                     reduced =  reduced.toFixed(2);
+                    descr = "Km";
+                }
+               if(exercise == "jump jack"){
+                    descr = "Minutes";
                 }
                 var isExtra = '';
                 var color = 'red';
@@ -337,7 +347,7 @@ function loadLogs(profile) {
                             <th scope="row">${exercise}</th>
                             <th scope="row">${currentCount}</th>
                             <th scope="row">${reduced}</th>
-                            <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
+                            <th scope="row"><span style="color:${color};">${isExtra}${newCount} ${descr}</span></th>
                         
                         </tr>
                 `;

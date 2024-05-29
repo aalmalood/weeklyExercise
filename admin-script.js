@@ -149,11 +149,25 @@ function loadExercises(profile) {
         if (snapshot.exists()) {
             const exercises = snapshot.val();
             const exercisesList = document.getElementById("exercises-list");
-            exercisesList.innerHTML = '<div width=90% class="d-flex justify-content-between align-items-left"><span>Exercise Name</span><span>Remaining</span><span>total</span><span>Action</span></div>';
-
+            exercisesList.innerHTML ="";
+            const div = document.createElement('table');
+            div.classList.add('table');    
+            div.classList.add('table-hover');
+            //div.classList.add('table-bordered');
+                div.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Exercise Name</th>
+                            <th scope="col">Remaining</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Action</th>
+                        
+                        </tr>
+                    </thead> 
+                `;
             for (let exercise in exercises) {
-                const div = document.createElement('div');
-                div.classList.add('list-group-item');
+                
                 var remaining = exercises[exercise].remaining;
                 var descr = "";
                 if(exercise == "jump jack"){
@@ -163,16 +177,21 @@ function loadExercises(profile) {
                     remaining = remaining.toFixed(2);
                     descr = "(Km)";
                 }
-                div.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>${exercise}${descr}</span>
-                        <input type="number" value="${remaining}" class="form-control w-25 mr-2" onchange="updateExercise('${profile}', '${exercise}', this.value)">
-                        <input type="number" value="${exercises[exercise].total}" class="form-control w-25 mr-2" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)">
-                        <button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                `;
-                exercisesList.appendChild(div);
+                div.innerHTML = div.innerHTML+`
+                
+                <tr>
+                        <td scope="row">${exercise}</td>
+                        <td scope="row"><input type="number" value="${remaining}" class="form-control btn-block" onchange="updateExercise('${profile}', '${exercise}', this.value)"></td>
+                        <td scope="row"><input type="number" value="${exercises[exercise].total}" class="form-control btn-block" onchange="updateExerciseTotal('${profile}', '${exercise}', this.value)"></td>
+                        <td scope="row"><button onclick="deleteExercise('${profile}', '${exercise}')" class="btn btn-danger btn-sm">Delete</button></td>
+                
+                </tr>
+                
+            `;
+                
             }
+            div.innerHTML = div.innerHTML+`</table>`;
+            exercisesList.appendChild(div);
             exercisesList.innerHTML = exercisesList.innerHTML +  `
             <div class="d-flex justify-content-between align-items-center">
                 <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-block">Reset</button>

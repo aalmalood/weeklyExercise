@@ -155,11 +155,10 @@ window.logExercise = function(profile, exercise) {
             console.log("currentCount", currentCount);*/
 
             const myElement = document.getElementById(exercise);
-            const rips = parseInt(myElement.value);
+            const rips = parseFloat(myElement.value);
+            
             const updatedCount = currentCount - rips; // Reduce by the value entered
-            if(exercise == "running"){
-                updatedCount = updatedCount.toFixed(2);
-            }
+            
             const updateData = {};
             updateData[`profiles/${profile}/exercises/${exercise}/remaining`] = updatedCount;
 

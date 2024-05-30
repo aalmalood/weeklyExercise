@@ -198,6 +198,7 @@ function loadExercises(profile) {
             </div>
         `;
             loadLogs(activeProfile);
+            loadResetLogs(activeProfile);
         } else {
             console.log("No exercises available for this profile");
         }
@@ -228,6 +229,7 @@ function addExercise() {
     set(exerciseRef, newExerciseRips).then(() => {
         loadExercises(activeProfile);
         loadLogs(activeProfile);
+        loadResetLogs(activeProfile);
         document.getElementById("new-exercise-name").value = '';
         document.getElementById("new-exercise-total").value = '';
     }).catch((error) => {
@@ -264,6 +266,7 @@ function deleteExercise(profile, exercise) {
     remove(exerciseRef).then(() => {
         loadExercises(profile);
         loadLogs(profile);
+        loadResetLogs(profile);
     }).catch((error) => {
         console.error("Error deleting exercise:", error);
     });
@@ -273,12 +276,15 @@ function resetExercises(profile) {
     const dbRef = ref(db, `profiles/${profile}/exercises/`);
     get(dbRef).then(snapshot => {
         const exercises = {};
-        
+        //creat a variable to collect data
+        var exercisesFullyLog = {} ;
         snapshot.forEach(exerciseSnapshot => {
             const exercise = exerciseSnapshot.val();
             const exerciseKey = exerciseSnapshot.key;
+            //collect the data 
             
-            console.log("exercise", exercise);
+            exercisesFullyLog[exerciseKey]  = exercise;
+            console.log("exercisesFullyLog", exercisesFullyLog);
             
             if (exercise.total === undefined) {
                 console.error(`Exercise ${exerciseKey} has undefined total value`);
@@ -290,10 +296,12 @@ function resetExercises(profile) {
                 exercises[exerciseKey] = newExerciseReps;
             }
         });
-        
+        // set the data in new log
         console.log("exercises", exercises);
         // Set the exercises for the new profile
          set(ref(db, `profiles/${profile}/exercises`), exercises);
+         const ddate = new Date().getTime();
+         set(ref(db, `profiles/${profile}/exercisesLogs/${ddate}`), exercisesFullyLog);
          loadExercises(profile);
     }).then(() => {
         // Reload profiles and exercise data
@@ -389,6 +397,88 @@ function loadLogs(profile) {
     });
 }
 
+function loadResetLogs(profile) {
+    console.log("inside loadResetLogs");
+    const dbRef = ref(db, `profiles/${profile}/exercisesLogs`);
+    setActiveProfile(profile);
+    get(dbRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const logs = snapshot.val();
+            console.log("logs: ", logs);
+            const logsList = document.getElementById("log-rest-list");
+            logsList.innerHTML = '';
+            
+            // Convert logs object to array and sort by date in descending order (newest to oldest)
+            const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
+            console.log("logsArray", logsArray);
+
+            const div = document.createElement('div'); // Use 'div' instead of 'table' for container
+            div.classList.add('table', 'table-striped');
+
+            div.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Exercise</th>
+                            <th scope="col">Remaining</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-table-body">
+                    </tbody>
+                </table>
+            `;
+
+            const tbody = div.querySelector('#log-table-body');
+
+            for (let log of logsArray) {
+                const date = new Date(parseInt(log.key)).toLocaleString(); // Parse key as timestamp
+                for (const [exercise, details] of Object.entries(log)) {
+                    if (exercise === 'key') continue; // Skip the 'key' property
+                    
+                    const total = details.total || '';
+                    let remaining = details.remaining || '';
+                    let descr = "";
+                    let color = 'red';
+                    let isExtra = '';
+
+                    if (exercise === "running") {
+                        remaining = remaining.toFixed(2);
+                        descr = "(Km)";
+                    } else if (exercise === "jump jack") {
+                        descr = " (Minutes)";
+                    }
+
+                    if (remaining < 0) {
+                        remaining = remaining * -1;
+                        isExtra = 'Extra: ';
+                        color = 'green';
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${exercise} ${descr}</td>
+                            <td><span style="color:${color};">${isExtra}${remaining}</span></td>
+                            <td>${total}</td>
+                        </tr>
+                    `;
+                }
+            }
+            logsList.appendChild(div);
+        } else {
+            const logsList = document.getElementById("log-rest-list");
+            logsList.innerHTML = '';
+            console.log("No logs available for this profile");
+        }
+    }).catch((error) => {
+        console.error(error);
+    });
+}
+
+
+
 
 
 // Attach functions to the window object to make them globally accessible
@@ -397,6 +487,7 @@ window.deleteProfile = deleteProfile;
 window.setActiveProfile = setActiveProfile;
 window.loadExercises = loadExercises;
 window.loadLogs = loadLogs;
+window.loadResetLogs = loadResetLogs;
 window.addExercise = addExercise;
 window.updateExercise = updateExercise;
 window.updateExerciseTotal = updateExerciseTotal;

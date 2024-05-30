@@ -109,15 +109,16 @@ function loadExerciseData() {
                 var color = "red";
                 var ripsLabel = "Remaining:";
                 var descr = "";
+                
                 loadLogs(selectedProfile);
-                var remaining = exercises[exercise].remaining;
+                var remaining = parseFloat(exercises[exercise].remaining);
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);
                     descr = "Km";
                 }
-                if(exercises[exercise].remaining <= 0){
+                if(remaining <= 0){
                     color = "green";
-                    exercises[exercise].remaining = exercises[exercise].remaining *-1;
+                    remaining = remaining *-1;
                     ripsLabel = "Extra:" ;
                 }
                 exerciseDiv.innerHTML = `
@@ -265,9 +266,11 @@ function loadLogs(profile) {
 
                 var isExtra = '';
                 var color = 'red';
-                if(newCount < 0){
+                if(newCount <= 0){
+                    if(newCount < 0){
+                        isExtra = 'Extra: ';
+                    }
                     newCount = newCount * -1;
-                    isExtra = 'Extra: ';
                     color = 'green';
                 }
                

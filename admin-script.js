@@ -412,7 +412,7 @@ function loadResetLogs(profile) {
             const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
             console.log("logsArray", logsArray);
 
-            const div = document.createElement('div'); // Use 'div' instead of 'table' for container
+            const div = document.createElement('table'); // Use 'div' instead of 'table' for container
             div.classList.add('table', 'table-striped');
 
             div.innerHTML = `

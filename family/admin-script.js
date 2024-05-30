@@ -326,7 +326,6 @@ function loadLogs(profile) {
                 var descr = "";
                 if(exercise == "running"){
                     newCount = newCount.toFixed(2);
-                    reduced =  reduced.toFixed(2);
                     descr = "Km";
                 }
                if(exercise == "jump jack"){

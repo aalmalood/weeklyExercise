@@ -219,12 +219,13 @@ function loadLogs(profile) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
+            const logsListLabel = document.getElementById("log-list-label");
+            logsListLabel.innerHTML = 'Logs for Selected Profile';
              // Convert logs object to array and sort by date in descending order (newest to oldest)
             const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
             logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
             const div = document.createElement('table');
-            div.classList.add('table');    
-            div.classList.add('table-striped');
+            div.classList.add('table' , 'table-striped');
             
                 div.innerHTML = `
                 <table>
@@ -238,8 +239,11 @@ function loadLogs(profile) {
                         
                         </tr>
                     </thead>
+                    <tbody id="log-table1-body">
+                    </tbody>
+                </table>
                 `;
-                
+            const tbody = div.querySelector('#log-table1-body');
             for (let log of logsArray) {
                 
               // console.log("log", log);
@@ -267,7 +271,7 @@ function loadLogs(profile) {
                     color = 'green';
                 }
                
-                div.innerHTML = div.innerHTML + `
+                tbody.innerHTML +=`
                     
                         <tr>
                             <th scope="row">${date}</th>
@@ -287,7 +291,9 @@ function loadLogs(profile) {
                 logsList.appendChild(div);
         } else {
             const logsList = document.getElementById("log-list");
+            const logsListLabel = document.getElementById("log-list-label");
             logsList.innerHTML = '';
+            logsListLabel.innerHTML = '';
             console.log("No logs available for this profile");
         }
     }).catch((error) => {

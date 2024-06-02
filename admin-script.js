@@ -502,7 +502,7 @@ function filterLogs() {
         const end = new Date(endDate);
 
         if (start > end) {
-            alert('From date must be before End date!');
+            showAlert('From date must be before End date!');
             return; // Exit the function if the date range is invalid
         }
     }
@@ -593,7 +593,17 @@ function filterLogs() {
     });
 }
 
+function showAlert(message) {
+    const alertBox = document.getElementById("custom-alert");
+    const alertMessage = document.getElementById("custom-alert-message");
+    alertMessage.textContent = message;
+    alertBox.style.display = "block";
+}
 
+function closeAlert() {
+    const alertBox = document.getElementById("custom-alert");
+    alertBox.style.display = "none";
+}
 
 
 

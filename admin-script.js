@@ -512,8 +512,12 @@ function filterLogs() {
                 const end = endDate ? new Date(endDate) : null;
                 start.setHours(0, 0, 0, 0);
                 end.setHours(23,59,59);
-                //console.log("start: " , start," end: " , end);
+                //console.log("start: " , start," end: " , end)
                 const isDateInRange = (!start || logDate >= start) && (!end || logDate <= end);
+                ;
+                if(start > end){
+                    throw new Error('From date must be before End date!');
+                }
                 const isExerciseMatch = !exerciseFilter || log.exercise === exerciseFilter;
                 return isDateInRange && isExerciseMatch;
             });

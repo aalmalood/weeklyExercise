@@ -110,7 +110,7 @@ function loadExerciseData() {
                 var ripsLabel = "Remaining:";
                 var descr = "";
                 
-                loadLogs(selectedProfile);
+               // loadLogs(selectedProfile);
                 var remaining = parseFloat(exercises[exercise].remaining);
                 if(exercise == "running"){
                     remaining = remaining.toFixed(2);

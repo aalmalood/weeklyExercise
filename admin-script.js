@@ -607,6 +607,11 @@ function closeAlert() {
     alertBox.style.display = "none";
 }
 
+function clearFilter(){
+     document.getElementById("start-date").value = null;
+     document.getElementById("end-date").value = null;
+    loadExercises(activeProfile);
+}
 
 
 
@@ -625,6 +630,7 @@ window.deleteExercise = deleteExercise;
 window.resetExercises = resetExercises;
 window.filterLogs = filterLogs;
 window.closeAlert = closeAlert;
+window.clearFilter = clearFilter;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

@@ -510,6 +510,8 @@ function filterLogs() {
                 const logDate = new Date(log.date);
                 const start = startDate ? new Date(startDate) : null;
                 const end = endDate ? new Date(endDate) : null;
+                start.setHours(0, 0, 0, 0);
+                end.setHours(23,59,59);
                 console.log("start: " , start," end: " , end);
                 const isDateInRange = (!start || logDate >= start) && (!end || logDate <= end);
                 const isExerciseMatch = !exerciseFilter || log.exercise === exerciseFilter;

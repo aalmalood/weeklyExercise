@@ -497,6 +497,16 @@ function filterLogs() {
     const startDate = document.getElementById("start-date").value;
     const endDate = document.getElementById("end-date").value;
 
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start > end) {
+            alert('From date must be before End date!');
+            return; // Exit the function if the date range is invalid
+        }
+    }
+
     const dbRef = ref(db, `profiles/${activeProfile}/logs`);
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
@@ -510,14 +520,7 @@ function filterLogs() {
                 const logDate = new Date(log.date);
                 const start = startDate ? new Date(startDate) : null;
                 const end = endDate ? new Date(endDate) : null;
-                start.setHours(0, 0, 0, 0);
-                end.setHours(23,59,59);
-                //console.log("start: " , start," end: " , end)
                 const isDateInRange = (!start || logDate >= start) && (!end || logDate <= end);
-                ;
-                if(start > end){
-                    throw new Error('From date must be before End date!');
-                }
                 const isExerciseMatch = !exerciseFilter || log.exercise === exerciseFilter;
                 return isDateInRange && isExerciseMatch;
             });
@@ -589,6 +592,7 @@ function filterLogs() {
         console.error(error);
     });
 }
+
 
 
 

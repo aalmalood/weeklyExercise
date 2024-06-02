@@ -482,27 +482,35 @@ function loadResetLogs(profile) {
     });
 }
 
-// Function to filter logs based on date and exercise name
+// Function to filter logs based on selected criteria
 function filterLogs() {
-    const filterDate = document.getElementById("filter-date").value;
-    const filterExercise = document.getElementById("filter-exercise").value.trim().toLowerCase();
-    const dbRef = ref(db, `profiles/${activeProfile}/logs`);
+    const exerciseFilter = document.getElementById("exercise-filter").value;
+    const startDate = document.getElementById("start-date").value;
+    const endDate = document.getElementById("end-date").value;
 
+    const dbRef = ref(db, `profiles/${activeProfile}/logs`);
     get(dbRef).then((snapshot) => {
         if (snapshot.exists()) {
             const logs = snapshot.val();
             const logsList = document.getElementById("log-list");
             logsList.innerHTML = '';
-            const logsListLabel = document.getElementById("log-list-label");
-            logsListLabel.innerHTML = 'Filtered Logs for Selected Profile';
 
-            // Convert logs object to array and sort by date in descending order (newest to oldest)
+            // Convert logs object to array and filter based on criteria
             const logsArray = Object.entries(logs).map(([key, log]) => ({ key, ...log }));
-            logsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const filteredLogs = logsArray.filter(log => {
+                const logDate = new Date(log.date);
+                const start = startDate ? new Date(startDate) : null;
+                const end = endDate ? new Date(endDate) : null;
+                const isDateInRange = (!start || logDate >= start) && (!end || logDate <= end);
+                const isExerciseMatch = !exerciseFilter || log.exercise === exerciseFilter;
+                return isDateInRange && isExerciseMatch;
+            });
+
+            // Sort by date in descending order (newest to oldest)
+            filteredLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             const div = document.createElement('table');
             div.classList.add('table', 'table-striped');
-
             div.innerHTML = `
                 <table>
                     <thead>
@@ -514,67 +522,58 @@ function filterLogs() {
                             <th scope="col">Remaining</th>
                         </tr>
                     </thead>
-                    <tbody id="log-table1-body">
+                    <tbody id="filtered-log-table-body">
                     </tbody>
                 </table>
             `;
 
-            const tbody = div.querySelector('#log-table1-body');
+            const tbody = div.querySelector('#filtered-log-table-body');
 
-            logsArray.forEach(log => {
-                const logDate = new Date(log.date).toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
-                const exerciseName = log.exercise ? log.exercise.toLowerCase() : '';
-
-                // Filter based on date and exercise name
-                if ((filterDate === '' || logDate === filterDate) &&
-                    (filterExercise === '' || exerciseName.includes(filterExercise))) {
-
-                    const date = log.date ? new Date(log.date).toLocaleString() : '';
-                    const exercise = log.exercise ? log.exercise : '';
-                    const currentCount = log.currentCount ? log.currentCount : '';
-                    const reduced = log.reduced ? log.reduced : '';
-                    let newCount = log.newCount ? log.newCount : '';
-                    let descr = "";
-                    if (exercise == "running") {
-                        newCount = newCount.toFixed(2);
-                        descr = "(Km)";
-                    }
-                    if (exercise == "jump jack") {
-                        descr = " (Minutes)";
-                    }
-
-                    let isExtra = '';
-                    let color = 'red';
-                    if (newCount < 0) {
-                        newCount = newCount * -1;
-                        isExtra = 'Extra: ';
-                        color = 'green';
-                    }
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <th scope="row">${date}</th>
-                            <th scope="row">${exercise} ${descr}</th>
-                            <th scope="row">${currentCount}</th>
-                            <th scope="row">${reduced}</th>
-                            <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
-                        </tr>
-                    `;
+            filteredLogs.forEach(log => {
+                const date = log.date ? new Date(log.date).toLocaleString() : '';
+                const exercise = log.exercise ? log.exercise : '';
+                const currentCount = log.currentCount ? log.currentCount : '';
+                const reduced = log.reduced ? log.reduced : '';
+                let newCount = log.newCount ? log.newCount : '';
+                let descr = "";
+                if (exercise == "running") {
+                    newCount = newCount.toFixed(2);
+                    descr = "(Km)";
                 }
+                if (exercise == "jump jack") {
+                    descr = " (Minutes)";
+                }
+
+                let isExtra = '';
+                let color = 'red';
+                if (newCount < 0) {
+                    newCount = newCount * -1;
+                    isExtra = 'Extra: ';
+                    color = 'green';
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <th scope="row">${date}</th>
+                        <th scope="row">${exercise} ${descr}</th>
+                        <th scope="row">${currentCount}</th>
+                        <th scope="row">${reduced}</th>
+                        <th scope="row"><span style="color:${color};">${isExtra}${newCount}</span></th>
+                    </tr>
+                `;
             });
 
             logsList.appendChild(div);
         } else {
             const logsList = document.getElementById("log-list");
-            const logsListLabel = document.getElementById("log-list-label");
             logsList.innerHTML = '';
-            logsListLabel.innerHTML = '';
             console.log("No logs available for this profile");
         }
     }).catch((error) => {
         console.error(error);
     });
 }
+
 
 
 

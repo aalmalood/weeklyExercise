@@ -32,9 +32,16 @@
 
         <h2>Filter Logs</h2>
         <div class="form-group">
-            <input type="date" id="filter-date" class="form-control" placeholder="Filter by Date">
-            <input type="text" id="filter-exercise" class="form-control mt-2" placeholder="Filter by Exercise Name">
-            <button onclick="filterLogs()" class="btn btn-dark mt-2">Filter Logs</button>
+            <label for="exercise-filter">Exercise:</label>
+            <select id="exercise-filter" class="form-control mb-2">
+                <option value="">All</option>
+                <!-- Exercise options will be populated dynamically -->
+            </select>
+            <label for="start-date">From Date:</label>
+            <input type="date" id="start-date" class="form-control mb-2">
+            <label for="end-date">To Date:</label>
+            <input type="date" id="end-date" class="form-control mb-2">
+            <button onclick="filterLogs()" class="btn btn-dark">Filter</button>
         </div>
 
         <h2 id="log-list-label"></h2>

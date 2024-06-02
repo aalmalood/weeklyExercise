@@ -210,7 +210,7 @@ function updateExercise(day, value) {
     });
 }
 
-
+/*
 // Function to load exercises for a selected profile
 function loadLogs(profile) {
     const dbRef = ref(db, `profiles/${profile}/logs`);
@@ -302,7 +302,7 @@ function loadLogs(profile) {
     }).catch((error) => {
         console.error(error);
     });
-}
+}*/
 
 
 // Attach functions to the window object to make them globally accessible

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Exercise Tracker - AlHareth</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+     <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Weekly Exercise Tracker</h1>
+        <h2 class="mt-4 mb-4" style="color:red;">Coach AlHareth</h2>
+        <div id="profile-section" class="form-group">
+            <label for="profile">Select Profile:</label>
+            <select id="profile" class="form-control mb-2 pinky" onchange="loadExerciseData()">
+                <!-- Profiles will be populated here -->
+            </select>
+            <!--input type="text" id="new-profile" class="form-control mb-2" placeholder="New Profile Name">
+            <button onclick="addProfile()" class="btn btn-primary">Add Profile</button!-->
+        </div>
+        <div id="exercise-section">
+            <!-- Exercise sections will be populated here dynamically -->
+        </div>
+        <!--button id="reset-button" class="btn btn-danger mt-4" onclick="resetExercises()">Reset Exercises</button!-->
+    </div>
+    <script src="script.js" type="module"></script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+body {
+    display: flex;
+    font-weight: bold;
+}
+
+.btn-primary {
+    
+    background-color: #e83e8c;
+    border-color: #e83e8c;
+}
+
+.list-group-item.active{
+    background-color: #e83e8c;
+    border-color: #e83e8c;
+}
+
+option {
+    color: #e83e8c;
+    border-color: #e83e8c;
+    font-weight: bold;
+}
+.pinky{
+    color: #e83e8c;
+    border-color: #e83e8c;
+    font-weight: bold;
+}
+
+

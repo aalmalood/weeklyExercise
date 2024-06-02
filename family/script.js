@@ -107,6 +107,7 @@ function loadExerciseData() {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 const imageName = exercise.replace(/\s/g, '');
+                imageName = imageName.toLowerCase();
                 /*console.log("exercises[exercise]" , exercises[exercise]);
                 console.log("exercises[remaining]" , exercises[exercise].remaining);
                 console.log("exercises[total]" , exercises[exercise].total);*/

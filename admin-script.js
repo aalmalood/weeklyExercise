@@ -622,6 +622,7 @@ window.updateExerciseTotal = updateExerciseTotal;
 window.deleteExercise = deleteExercise;
 window.resetExercises = resetExercises;
 window.filterLogs = filterLogs;
+window.closeAlert = closeAlert;
 
 // Initial load of profiles after authentication
 document.addEventListener("DOMContentLoaded", () => {

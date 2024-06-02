@@ -44,14 +44,22 @@
                 </select>
             </div>
             <div class="row">
-                <label for="start-date" class="mb-2">From Date: </label>
-                <input type="date" id="start-date" class="mb-2 col-xs-2">
-                <span>    </span>
-                <label class="mb-2" for="end-date">To Date: </label>
-                <input type="date" id="end-date" class="mb-2  col-xs-2">
+                <div class="col">
+                    <label for="start-date" class="mb-2">From Date: </label>
+                    <input type="date" id="start-date" class="mb-2 col-xs-2">
+                
+                </div>
+                <div class="col">
+                    <label class="mb-2" for="end-date">To Date: </label>
+                    <input type="date" id="end-date" class="mb-2  col-xs-2">
+                </div>
+                
             </div>
-            <button onclick="filterLogs()" class="btn btn-dark">Filter</button>
-            <button onclick="clearFilter()" class="btn btn-dark">Clear</button>
+            <div style="align-items: center;">
+                <button onclick="filterLogs()" class="btn btn-dark">Filter</button>
+                <button onclick="clearFilter()" class="btn btn-dark">Clear</button>
+            </div>
+           
         </div>
         <div id="log-list" class="list-group mb-4"></div>
 

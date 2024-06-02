@@ -151,8 +151,7 @@ function loadExercises(profile) {
             const exercisesList = document.getElementById("exercises-list");
             exercisesList.innerHTML ="";
             const div = document.createElement('table');
-            div.classList.add('table');    
-            div.classList.add('table-hover');
+            div.classList.add('table' , 'table-hover');    
             //div.classList.add('table-bordered');
                 div.innerHTML = `
                 <table>

@@ -30,7 +30,42 @@
             <button onclick="addExercise()" class="btn btn-primary mt-2">Add Exercise</button>
         </div>
 
-        <h2>Logs for Selected Profile</h2>
+        
+
+        <h2 id="log-rest-list-label"></h2>
+        <div id="log-rest-list" class="list-group mb-4"></div>
+
+        <h2 id="log-list-label"></h2>
+        <div id="custom-alert" class="custom-alert" style="display:none;">
+            <span id="custom-alert-message"></span>
+            <button onclick="closeAlert()">Close</button>
+        </div>
+        <div id="filter" class="form-group">
+            <div class="input-group mb-3">
+                <span class="input-group-text mb-2" for="exercise-filter" id="basic-addon1">Exercise:</span>
+                <select id="exercise-filter" class="form-control mb-2">
+                    <option value="">All</option>
+                    <!-- Exercise options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="start-date" class="mb-2">From Date: </label>
+                    <input type="date" id="start-date" class="mb-2 col-xs-2">
+                
+                </div>
+                <div class="col">
+                    <label class="mb-2" for="end-date">To Date: </label>
+                    <input type="date" id="end-date" class="mb-2  col-xs-2">
+                </div>
+                
+            </div>
+            <div style="text-align: center;">
+                <button onclick="filterLogs()" class="btn btn-primary ">Filter</button>
+                <button onclick="clearFilter()" class="btn btn-primary ">Clear</button>
+            </div>
+           
+        </div>
         <div id="log-list" class="list-group mb-4"></div>
     </div>
     <script type="module" src="admin-script.js"></script>

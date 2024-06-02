@@ -30,6 +30,13 @@
             <button onclick="addExercise()" class="btn btn-dark mt-2">Add Exercise</button>
         </div>
 
+        <h2>Filter Logs</h2>
+        <div class="form-group">
+            <input type="date" id="filter-date" class="form-control" placeholder="Filter by Date">
+            <input type="text" id="filter-exercise" class="form-control mt-2" placeholder="Filter by Exercise Name">
+            <button onclick="filterLogs()" class="btn btn-dark mt-2">Filter Logs</button>
+        </div>
+
         <h2 id="log-list-label"></h2>
         <div id="log-list" class="list-group mb-4"></div>
 

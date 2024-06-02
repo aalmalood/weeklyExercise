@@ -197,6 +197,15 @@ function loadExercises(profile) {
                 <button onclick="resetExercises('${profile}')" class="btn btn-danger btn-block">Reset</button>
             </div>
         `;
+         // Populate exercise dropdown for filtering
+         const exerciseFilter = document.getElementById("exercise-filter");
+         exerciseFilter.innerHTML = '<option value="">All</option>';
+         for (let exercise in exercises) {
+             const option = document.createElement("option");
+             option.value = exercise;
+             option.textContent = exercise;
+             exerciseFilter.appendChild(option);
+         }
             loadLogs(activeProfile);
             loadResetLogs(activeProfile);
         } else {

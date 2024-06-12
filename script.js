@@ -106,7 +106,7 @@ function loadExerciseData() {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 let imageName = exercise.replace(/\s/g, '');
-                imageName = imageName.toLowerCase;
+                imageName = imageName.toLowerCase();
                 var color = "red";
                 var ripsLabel = "Remaining:";
                 var descr = "";

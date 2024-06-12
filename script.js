@@ -106,7 +106,7 @@ function loadExerciseData() {
                 const exerciseDiv = document.createElement('div');
                 exerciseDiv.classList.add('form-group');
                 let imageName = exercise.replace(/\s/g, '');
-                
+                imageName = imageName.toLowerCase;
                 var color = "red";
                 var ripsLabel = "Remaining:";
                 var descr = "";
@@ -125,7 +125,7 @@ function loadExerciseData() {
                 exerciseDiv.innerHTML = `
                     <div class="row">
                         <div class="column">
-                            <img src="src/img/${imageName.toLowerCase}.jpg" alt="" width=50% height=50%>
+                            <img src="src/img/${imageName}.jpg" alt="" width=50% height=50%>
                         </div>
                         <div class="column">  
                                 <label style="text-transform: capitalize;" for="${exercise}">${exercise}</label>  

@@ -472,10 +472,10 @@ function loadResetLogs(profile) {
 
                     tbody.innerHTML += `
                         <tr style="background-color: ${currentcolor}; opacity: 0.3">
-                            <td>${date}</td>
-                            <td>${exercise} ${descr}</td>
-                            <td><span style="color:${color};">${isExtra}${remaining}</span></td>
-                            <td>${total}</td>
+                            <td style="opacity: 1">${date}</td>
+                            <td style="opacity: 1">${exercise} ${descr}</td>
+                            <td style="opacity: 1"><span style="color:${color};">${isExtra}${remaining}</span></td>
+                            <td> style="opacity: 1"${total}</td>
                         </tr>
                     `;
                 

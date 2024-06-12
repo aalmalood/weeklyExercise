@@ -442,7 +442,7 @@ function loadResetLogs(profile) {
             `;
 
             const tbody = div.querySelector('#log-table-body');
-            const colors = [ 'blue', 'yellow', 'orange', 'purple', 'brown', 'cyan', 'magenta', 'lime', 'teal', 'lavender', 'maroon'];
+            const colors = [ '0, 0, 255', '255, 255, 0', '255, 165, 0', '128, 0, 128', '165, 42, 42', '0, 255, 255', '255, 0, 255', '0, 255, 0', '0, 128, 128', '230, 230, 250', '128, 0, 0'];
             let i = 0;
             logsArray.sort((a, b) => new Date(b.key) - new Date(a.key));
             for (let log of logsArray) {
@@ -471,11 +471,11 @@ function loadResetLogs(profile) {
                     }
 
                     tbody.innerHTML += `
-                        <tr style="background-color: ${currentcolor}; opacity: 0.3">
-                            <td style="opacity: 1">${date}</td>
-                            <td style="opacity: 1">${exercise} ${descr}</td>
-                            <td style="opacity: 1"><span style="color:${color};">${isExtra}${remaining}</span></td>
-                            <td> style="opacity: 1"${total}</td>
+                        <tr style="background-color: rgb(${currentcolor} ,0.3)">
+                            <td>${date}</td>
+                            <td>${exercise} ${descr}</td>
+                            <td><span style="color:${color};">${isExtra}${remaining}</span></td>
+                            <td>${total}</td>
                         </tr>
                     `;
                 

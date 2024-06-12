@@ -442,9 +442,12 @@ function loadResetLogs(profile) {
             `;
 
             const tbody = div.querySelector('#log-table-body');
-
+            const colors = [ 'blue', 'yellow', 'orange', 'purple', 'brown', 'cyan', 'magenta', 'lime', 'teal', 'lavender', 'maroon'];
+            let i = 0;
+            logsArray.sort((a, b) => new Date(b.key) - new Date(a.key));
             for (let log of logsArray) {
                 const date = new Date(parseInt(log.key)).toLocaleString(); // Parse key as timestamp
+                let currentcolor = colors[i];
                 for (const [exercise, details] of Object.entries(log)) {
                     if (exercise === 'key') continue; // Skip the 'key' property
                     
@@ -468,14 +471,16 @@ function loadResetLogs(profile) {
                     }
 
                     tbody.innerHTML += `
-                        <tr>
+                        <tr style="background-color: ${currentcolor}; opacity: 0.3">
                             <td>${date}</td>
                             <td>${exercise} ${descr}</td>
                             <td><span style="color:${color};">${isExtra}${remaining}</span></td>
                             <td>${total}</td>
                         </tr>
                     `;
+                
                 }
+                 i = (i +1)%colors.length;
             }
             logsList.appendChild(div);
         } else {

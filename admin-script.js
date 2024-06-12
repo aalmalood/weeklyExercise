@@ -471,7 +471,7 @@ function loadResetLogs(profile) {
                     }
 
                     tbody.innerHTML += `
-                        <tr style="background-color: rgb(${currentcolor} ,0.3)">
+                        <tr style="background-color: rgb(${currentcolor} ,0.2)">
                             <td>${date}</td>
                             <td>${exercise} ${descr}</td>
                             <td><span style="color:${color};">${isExtra}${remaining}</span></td>
